@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StudentInfo>
+	<student id="10">
+		<name>zhangqiang</name>
+		<sex>男</sex>
+		<lesson>
+			<lessonName>Java初级</lessonName>
+			<lessonScore>85</lessonScore>
+		</lesson>
+		<lesson>
+			<lessonName>Oracle数据库</lessonName>
+			<lessonScore>95</lessonScore>
+		</lesson>
+		<lesson>
+			<lessonName>Java中级</lessonName>
+			<lessonScore>80</lessonScore>
+		</lesson>
+		<lesson>
+			<lessonName>Java高级</lessonName>
+			<lessonScore>100</lessonScore>
+		</lesson>
+	</student>
+
+	<breakLine />
+
+	<student id="10">
+		<name>zhangqiang</name>
+		<sex>女</sex>
+		<lesson>
+			<lessonName>射箭</lessonName>
+			<lessonScore>100</lessonScore>
+		</lesson>
+		<lesson>
+			<lessonName>柔道</lessonName>
+			<lessonScore>95</lessonScore>
+		</lesson>
+		<lesson>
+			<lessonName>国学</lessonName>
+			<lessonScore>80</lessonScore>
+		</lesson>
+		<lesson>
+			<lessonName>烹饪</lessonName>
+			<lessonScore>60</lessonScore>
+		</lesson>
+		<lesson>
+			<lessonName>游泳</lessonName>
+			<lessonScore>70</lessonScore>
+		</lesson>
+	</student>
+
+	<breakLine />
+
+</StudentInfo>
