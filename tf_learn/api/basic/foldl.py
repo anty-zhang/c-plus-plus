@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
 
+"""
+foldl: 对一个列表或者张量,重复调用自定义回调函数fn, 输入的操作数有两个，具体参数如下
+    fn: 需要执行的回调函数, 两个输入参数, 一个返回值作为累计结果
+    elems: 张量
+    initialize: 作为累加器(accumulated value)的初始值
+
+foldl(fn, elems=[x1, x2, x3, x4]) = fn(fn(fn(x1, x2), x3), x4)
+foldr(fn, elems=[x1, x2, x3, x4]) = fn(fn(fn(x3, x4), x2), x1)
+
+"""
+
 import tensorflow as tf
 
 
@@ -27,7 +38,7 @@ with tf.Session() as sess:
 
 """
 result:
-/Users/didi/anaconda3/envs/tf/bin/python /Users/didi/didi/work/tf_example/func/foldl_t.py
+/Users/didi/anaconda3/envs/tf/bin/python /Users/didi/didi/work/tf_example/basic/foldl_t.py
 /Users/didi/anaconda3/envs/tf/lib/python3.6/importlib/_bootstrap.py:219: RuntimeWarning: numpy.dtype size changed, may indicate binary incompatibility. Expected 96, got 88
   return f(*args, **kwds)
 /Users/didi/anaconda3/envs/tf/lib/python3.6/importlib/_bootstrap.py:219: RuntimeWarning: numpy.dtype size changed, may indicate binary incompatibility. Expected 96, got 88

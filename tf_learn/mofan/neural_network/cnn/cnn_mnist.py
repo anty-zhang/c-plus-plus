@@ -8,7 +8,7 @@ mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
 
 
 ########################################################################################################################
-# define public func
+# define public basic
 def compute_accuracy(sess, v_xs, v_ys):
     global prediction
     y_pre = sess.run(prediction, feed_dict={xs: v_xs, keep_prob: 1})
