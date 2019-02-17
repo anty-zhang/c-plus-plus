@@ -12,6 +12,24 @@
 
 [TOC]
 
+## 颜色/字号/字体
+
+
+<font color=red size=5> red </font>
+
+<font color=blue size=5> blue </font>
+
+<font color=green size=5> green </font>
+
+<font color=orange size=5> orange </font>
+
+<font color=yellow size=5> yellow </font>
+
+<font color=teal size=5> teal </font>
+
+<font color=olive size=5> olive </font>
+
+
 ## Markdown简介
 
 > Markdown 是一种轻量级标记语言，它允许人们使用易读易写的纯文本格式编写文档，然后转换成格式丰富的HTML页面。    —— [维基百科](https://zh.wikipedia.org/wiki/Markdown)
