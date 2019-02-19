@@ -28,3 +28,4 @@
 *.app
 my_model
 .idea
+events.out*
