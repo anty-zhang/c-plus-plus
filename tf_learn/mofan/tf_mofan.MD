@@ -49,6 +49,139 @@
 
 > 在简化版的误差曲线中, 我们只要找到梯度线躺平的地方, 就能能迅速找到误差最小时的 W. 可是很多情况是这样的, 误差曲线并不只有一个沟, 而且梯度躺平的点也不止一个. 不同的 W 初始化的位置, 将会带来不同的下降区域. 不同的下降区域, 又会带来不同的 W 解. 在这个图像当中, W 的全局最优解(Global minima)在这个位置, 而其它的 解都是局部最优(Local minima). 全局最优固然是最好, 但是很多时候, 你手中的都是一个局部最优解, 这也是无可避免的. 不过你可以不必担心, 因为虽然不是全局最优, 但是神经网络也能让你的局部最优足够优秀, 以至于即使拿着一个局部最优也能出色的完成手中的任务.
 
+### 实例
+```python
+
+import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+
+LR = 0.1
+# LR = 1.
+REAL_PARAMS = [1.2, 2.5]
+INPUT_PARAMS = [
+    [5, 4],
+    [5, 1],
+    [2, 4.5]][0]
+
+x = np.linspace(-1, 1, 200, dtype=np.float32)
+
+# ############################################################################################################
+# test1
+# y_fun = lambda a, b: a * x + b
+# tf_y_fun = lambda a, b: a * x + b
+
+# ############################################################################################################
+# test2
+# y_fun = lambda a, b: a * x ** 3 + b * x ** 2
+# tf_y_fun = lambda a, b: a * x ** 3 + b * x ** 2
+
+# ############################################################################################################
+# test3
+y_fun = lambda a, b: np.sin(b * np.cos(a * x))
+tf_y_fun = lambda a, b: tf.sin(b * tf.cos(a * x))
+
+noise = np.random.randn(200)/10
+y = y_fun(*REAL_PARAMS) + noise
+
+# print("noise: ", noise)
+# print("y: ", y)
+print("INPUT_PARAMS: ", INPUT_PARAMS)
+
+# tensorflow graph
+a, b = [tf.Variable(initial_value=p, dtype=tf.float32) for p in INPUT_PARAMS]
+pred = tf_y_fun(a, b)
+mse = tf.reduce_mean(tf.square(y - pred))
+train_op = tf.train.GradientDescentOptimizer(LR).minimize(mse)
+
+a_list, b_list, cost_list = [], [], []
+with tf.Session() as sess:
+    init = tf.global_variables_initializer()
+    sess.run(init)
+    for i in range(400):
+        a_, b_, mse_ = sess.run([a, b, mse])
+        a_list.append(a_)
+        b_list.append(b_)
+        cost_list.append(mse_)                          # record parameter changes
+        result, _ = sess.run([pred, train_op])          # training
+
+# visualization codes
+plt.figure(1)
+plt.scatter(x, y, c='b')    # plot data
+plt.plot(x, result, 'r-', lw=2)     # plot line fitting
+
+# 3D cost figure
+fig = plt.figure(2)
+ax = Axes3D(fig)
+a3D, b3D = np.meshgrid(np.linspace(-2, 7, 30), np.linspace(-2, 7, 30))  # parameter space
+cost3D = np.array([np.mean(np.square(y_fun(a_, b_) - y)) for a_, b_ in zip(a3D.flatten(), b3D.flatten())]).reshape(a3D.shape)
+ax.plot_surface(a3D, b3D, cost3D, rstride=1, cstride=1, cmap=plt.get_cmap('rainbow'), alpha=0.5)
+ax.scatter(a_list[0], b_list[0], zs=cost_list[0], s=300, c='r')     # initial parameter place
+ax.set_xlabel('a')
+ax.set_ylabel('b')
+ax.plot(a_list, b_list, zs=cost_list, zdir='z', c='r', lw=3)        # plot 3D gradient descent
+
+plt.show()
+```
+
+#### 普通的梯度下降
+```python
+# test 1
+y_fun = lambda a, b: a * x + b
+tf_y_fun = lambda a, b: a * x + b
+
+```
+![sample_test_1_1](./img/gradient_descent/sample_test_1_1.png)
+![sample_test_1_2](./img/gradient_descent/sample_test_1_2.gif)
+
+看上去他从最开始的红点, 很顺利的滑落到了误差最小的地方. 梯度下降圆满完成.如果我们来尝试不同的学习效率呢, 比如调整最开始的 LR=1, 就会发生下面这样的事.
+
+![sample_test_1_3](./img/gradient_descent/sample_test_1_3.gif)
+
+貌似这时的梯度下降变得纠结起来, 梯度下不去了. 原来这就是因为学习效率过大的原因, 导致虽然学得快, 但是没办法收敛. 我们也能从学习到的预测线看出来这样的现象, 现在下面的预测线没有办法预测出真实数据了. 所以切记, 当你的模型没办法收敛的时候, 试试调低学习率.
+
+
+#### 为模型,公式调参
+接下来我们看看 Tensorflow 的另一种用途, 为公式调参. 说到底, 神经网络就是用梯度下降, 而梯度下降就是一种优化模式 具体参考我制作的这个短视频. 所以我们也可以使用 Tensorflow 的梯度下降机制来调参. 比如我们将上面的提到的 y_fun 和 tf_y_fun 改成下面这样 (其实上面也是在调参).
+
+```python
+# test 2
+y_fun = lambda a, b: a * x**3 + b * x**2
+tf_y_fun = lambda a, b: a * x**3 + b * x**2
+
+```
+现在有点像一个经验公式了吧. 其实很多时候, 人们总结出来的经验公式其实是很有用的, 我们没必要大费周章来使用神经网络处理所有问题, 首先遇到一个问题, 你要想的是, 在这个问题中, 是否以前有人提出过什么经验公式的, 那我来对这个经验公式调调参. 这可比神经网络方便多了. 而且梯度下降调参只是调参中的一种方式, 还有很多种调参方式, 具体可以看看和使用 python 的另一个模块 scipy 中的 optimization 链接.
+好了, 如果你决定用梯度下降调参, 这份代码就是一种途径. 代码的其他部分不用过多更改. 我们直接来看效果吧. 首先看看数据点和拟合参数a, b 后的曲线.
+
+![sample_test_2_1](./img/gradient_descent/sample_test_2_1.png)
+![sample_test_2_2](./img/gradient_descent/sample_test_2_2.gif)
+
+#### 局部最优,全局最优
+在回到神经网络的话题中来, 多层的有激活神经网络必定有很多局部最优解的. 我在这个短视频中也提过什么是全局最优和局部最优. 那么我们就来做一个有两个参数的简单神经网络吧. 同样, 我们至于要修改 y_fun 和 tf_y_fun 就好了:
+
+```python
+# test3
+y_fun = lambda a, b: np.sin(b*np.cos(a*x))
+tf_y_fun = lambda a, b: tf.sin(b*tf.cos(a*x))
+```
+想象 np.cos(a*x) 是有激活的一层神经层, np.sin(b*last_layer) 是有激活的第二层. 那么这个方程就是最简单的一种两层神经网络了. 如果使用的初始参数点是 INIT_PARAMS=[2, 4.5] 他的数据点和拟合曲线是下面这样:
+
+![sample_test_3_1](./img/gradient_descent/sample_test_3_1.png)
+
+他的梯度下降空间就是我们最开始看到的那个
+
+![sample_test_3_2](./img/gradient_descent/sample_test_3_2.gif)
+
+从初始的 INIT_PARAMS=[2, 4.5] 这个点开始梯度下降, 我们就能成功的找到接近全局最优的 a=1.2; b=2.5, 但是这个3D 图上有很多局部最优点, 如果我们换一个初始参数位置, 比如 INIT_PARAMS=[5, 1]. 那么就会下降到一个最靠近他的局部最优.
+
+![sample_test_3_3](./img/gradient_descent/sample_test_3_3.gif)
+
+这样, 我们的模型就只能止步在这, 而且并不能继续向前拟合数据点了. 所以可以看出参数的初始化位置的确很重要.
+
+![sample_test_3_4](./img/gradient_descent/sample_test_3_4.gif)
+通常, 在初始化神经网络的参数时, 我们可以用到 Normal distribution 等方式, 并且多做几次初始化实验, 看看效果如何. 运气好的时候, 初始化很成功, 带来的比较好的局部最优, 运气不好的时候.. 你懂的.. 继续做实验吧.
 
 ## 科普：神经网络的黑盒不黑
 
@@ -425,9 +558,62 @@ Batch normalization 也可以被看做一个层面. 在一层层的添加神经�
 [论文：Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift](https://arxiv.org/abs/1502.03167)
 
 
-###
+## 迁移学习
+
+[斯坦福迁移学习阅读](http://cs231n.github.io/transfer-learning/)
+
+## GAN(Generative Adversarial Nets)
+
+### 常见神经网络形式
+![gan2](./img/gan/gan2.png)
+
+神经网络分很多种, 有普通的前向传播神经网络 , 有分析图片的 CNN 卷积神经网络 , 有分析序列化数据, 比如语音的 RNN 循环神经网络 , 这些神经网络都是用来输入数据, 得到想要的结果, 我们看中的是这些神经网络能很好的将数据与结果通过某种关系联系起来.
+
+### 生成网络
+
+![gan3](./img/gan/gan3.png)
+
+但是还有另外一种形式的神经网络, 他不是用来把数据对应上结果的, 而是用来”凭空”捏造结果, 这就是我们要说的生成网络啦. GAN 就是其中的一种形式. 那么 GAN 是怎么做到的呢? 当然这里的”凭空”并不是什么都没有的空盒子, 而是一些随机数.
+
+![gan4](./img/gan/gan4.png)
+
+对, 你没听错, 我们就是用没有意义的随机数来生成有有意义的作品, 比如著名画作. 当然, 这还不是全部, 这只是一个 GAN 的一部分而已, 这一部分的神经网络我们可以想象成是一个新手画家.
 
 
+### 举例
+
+- 新手画家
+
+![gan5](./img/gan/gan5.png)
+
+画家作画都需要点灵感 , 他们都是依照自己的灵感来完成作品. 有了灵感不一定有用, 因为他的作画技术并没有我们想象得好, 画出来有可能是一团糟. 这可怎么办, 聪明的新手画家找到了自己的一个正在学鉴赏的好朋友 – 新手鉴赏家.
 
 
+- 新手鉴赏家
 
+![gan6](./img/gan/gan6.png)
+
+可是新手鉴赏家也没什么能耐, 他也不知道如何鉴赏著名画作 , 所以坐在电脑旁边的你实在看不下去了, 拿起几个标签往屏幕上一甩 , 然后新手鉴赏家就被你这样一次次的甩来甩去着甩乖了, 慢慢也学会了怎么样区分著名画家的画了. 重要的是, 新手鉴赏家和新手画家是好朋友, 他们总爱分享学习到的东西.
+
+- 新手鉴赏家和新手画家
+
+![gan7](./img/gan/gan7.png)
+
+所以新手鉴赏家告诉新手画家, “你的画实在太丑了, 你看看人家达芬奇, 你也学学它呀, 比如这里要多加一点, 这里要画淡一点.” 就这样, 新手鉴赏家将他从你这里所学到的知识都分享给了新手画家, 让好朋友新手画家也能越画越像达芬奇. 这就是 GAN 的整套流程, 我们在来理一下.
+
+![gan8](./img/gan/gan8.png)
+
+新手画家用随机灵感画画 , 新手鉴赏家会接收一些画作, 但是他不知道这是新手画家画的还是著名画家画的, 他说出他的判断, 你来纠正他的判断, 新手鉴赏家一边学如何判断, 一边告诉新手画家要怎么画才能画得更像著名画家, 新手画家就能学习到如何从自己的灵感画出更像著名画家的画了. GAN 也就这么回事.
+
+
+### GAN 网络
+
+![gan9](./img/gan/gan9.png)
+
+Generator 会根据随机数来生成有意义的数据 , Discriminator 会学习如何判断哪些是真实数据 , 哪些是生成数据, 然后将学习的经验反向传递给 Generator, 让 Generator 能根据随机数生成更像真实数据的数据. 这样训练出来的 Generator 可以有很多用途, 比如最近有人就拿它来生成各种卧室的图片.
+
+### GAN 应用
+
+![gan10](./img/gan/gan10.png)
+
+甚至你还能玩点新花样, 比如让图片来做加减法, 戴眼镜的男人 减去 男人 加上 女人, 他居然能生成 戴眼镜的女人的图片. 甚至还能根据你随便画的几笔草图来生成可能是你需要的蓝天白云大草地图片. 哈哈, 看起来机器也能有想象力啦. 如果你想试着动手做一个 GAN 的实践, 却不知道如何做, 不用担心, 我也为准备好了一个使用 Python 和他神经网络模块搭建的最简单的 GAN 实践代码. 欢迎大家访问莫烦 Python 了解更多机器学习的内容.
