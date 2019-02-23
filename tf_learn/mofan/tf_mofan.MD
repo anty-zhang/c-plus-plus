@@ -617,3 +617,358 @@ Generator 会根据随机数来生成有意义的数据 , Discriminator 会学�
 ![gan10](./img/gan/gan10.png)
 
 甚至你还能玩点新花样, 比如让图片来做加减法, 戴眼镜的男人 减去 男人 加上 女人, 他居然能生成 戴眼镜的女人的图片. 甚至还能根据你随便画的几笔草图来生成可能是你需要的蓝天白云大草地图片. 哈哈, 看起来机器也能有想象力啦. 如果你想试着动手做一个 GAN 的实践, 却不知道如何做, 不用担心, 我也为准备好了一个使用 Python 和他神经网络模块搭建的最简单的 GAN 实践代码. 欢迎大家访问莫烦 Python 了解更多机器学习的内容.
+
+
+# 进化算法
+
+** 用进化理论来解决复杂的问题. 遗传算法是进化算法的一个分支. 它将达尔文的进化理论搬进了计算机. **
+
+## Genetic Algorithm(遗传算法)
+
+### 进化算法
+
+![genetic-algorithm1](./img/evolution_alg/ga/genetic-algorithm1.png)
+
+所以你会发现在程序中, 我们还时不时出现什么染色体, DNA, 遗传, DNA交叉, 变异 这些东西. 不过想想也能明白, 在自然界中, 优胜劣汰, 我们人类也是靠着这些手段一步步从猴子
+
+![genetic-algorithm2](./img/evolution_alg/ga/genetic-algorithm2.png)
+
+变成会敲键盘, 会唱歌, 会读书, 会干坏事的猴子了. 哈哈. 重点不是这些. 我们应该正儿八经地想想, 我们是怎么样一步一步变成后面这些猴子的.
+
+### 举例
+
+#### 猴子的进化
+
+![genetic-algorithm3](./img/evolution_alg/ga/genetic-algorithm3.png)
+
+想象我们的祖先是这么一群一直在树上的猴子. 某一天他们诞下了一只可能是因为某种变异而总喜欢呆在地上的猴子. 因为总喜欢在地上, 地上又有很多石头, 他开始用石头作为自己的工具, 比如砸开坚硬的果实或者做武器. 会使用石头的猴子变的比其他猴子更容易吃到东西, 也更有能力抵御外人. 所以这样的猴子活得越久, 繁衍得越多. 所以我们的祖先慢慢地变成了地上的猴子. 离变成人类也进了一步. 我们看到上面的线路, 可以总结一下这整套流程。
+
+#### 种群的进化
+
+![genetic-algorithm4](./img/evolution_alg/ga/genetic-algorithm4.png)
+
+首先有一整个种族, 然后种族里不断的繁衍后代, 有时候会突然间产生一些变异, 这些变异中有一些天生畸形, 一些有了新的能力, 不适应环境的人们, (包括畸形)被当下的环境淘汰掉了, 适应环境的人们, (包括哪些变异出新能力的人)被保留, 并且还能繁衍出更多这种新能力的人. 这就变成了我们下一代的种族. 接着继续这个循环. 其实计算机也能套用这一套体系, 这就有了我们的遗传算法.
+
+### 电脑里的 DNA
+
+![genetic-algorithm5](./img/evolution_alg/ga/genetic-algorithm5.png)
+
+每个人都会有他独有的遗传信息比如 DNA, 种群的繁衍也就是这些 DNA 的传承, 所以遗传算法把握住了这一条定律. 我们就尝试着在电脑中用某些途径来代替这些生物形式的 DNA. 我们如果仔细看看这些 DNA, 就会发现, 他们其实是由一组组固定的结构构成, 如果你还没有忘记初高中学的生物, 这种小的结构就叫做碱基对. 在程序中, 我们也可以模拟这些结构, 将这些结构遗传给下一代或者变异一下. 最常用的一种替换方式是: 我们直接使用0和1来代替, 因为在电脑中, 所有东西都是01, 01 就是电脑的语言. 我们的手脚都是从这些最基本的 DNA 信息里翻译出来的, 那么我们也能用一定的规则将01这类信息用电脑翻译成其他的信息.
+
+![genetic-algorithm6](./img/evolution_alg/ga/genetic-algorithm6.png)
+
+有了这些电脑能懂的 DNA 形式, 我们就能模拟生物中的繁衍后代了, 假设我们有两个来自父母的 DNA 信息. 我们只需要选取他们各自一段信息就能组成新的宝宝的DNA信息. 生物繁衍中, 还会存在时不时的变异, 我们也能从这套01 的系统中体现出来, 只要将某些地方将0变成1, 1变成0就好了. <font color=red>有了这些遗传变异, 加上那一套适者生存,不适者淘汰的理论, </font> 你的电脑里就能有一群渐渐成长壮大的小生物了.
+
+### 别人的实验
+
+![genetic-algorithm7](./img/evolution_alg/ga/genetic-algorithm7.png)
+
+我们来看看别人都在拿电脑里喂养了哪些生物吧. 比如进化出会自己闯关的马里奥, 自动驾驶的汽车, 还能模拟微生物的行为. 看上去是不是真有那么一回事. 我会将这些视频的链接附在我”莫烦Python”的网页中, 有兴趣的朋友们可以观看一下.
+
+### 实例-寻找曲线最高点
+
+![example](./img/evolution_alg/ga/example_1.gif)
+
+#### 找一个好的fitness方程
+所有的遗传算法 (Genetic Algorithm), 后面都简称 GA, 我们都 ** 需要一个评估好坏的方程, 这个方程通常被称为 fitness. ** 在今天的问题中, 我们找到下面这个曲线当中的最高点. 那么这个 fitness 方程就很好定, 越高的点, fitness 越高.
+
+如果这个曲线上任一点的 y 值是 pred 的话, 我们的 fitness 就是下面这样:
+
+```python
+def get_fitness(pred):
+    return pred
+```
+
+#### DNA 编码
+在 GA 中有基因, 为了方便, 我们直接就称为 DNA 吧. GA 中第二重要的就是这 DNA 了, 如何编码和解码 DNA, 就是你使用 GA 首先要想到的问题. 传统的 GA 中, DNA 我们能用一串二进制来表示, 比如:
+
+```python
+DNA1 = [1, 1, 0, 1, 0, 0, 1]
+DNA2 = [1, 0, 1, 1, 0, 1, 1]
+```
+
+为什么会要用二进制编码, 我们之后在下面的内容中详细说明这样编码的好处. 但是长成这样的 DNA 并不好使用. 如果要将它解码, 我们可以将二进制转换成十进制, 比如二进制的 11 就是十进制的 3. 这种转换的步骤在程序中很好执行. 但是有时候我们会需要精确到小数, 其实也很简单, 只要再将十进制的数浓缩一下就好. 比如我有 1111 这么长的 DNA, 我们产生的十进制数范围是 [0, 15], 而我需要的范围是 [-1, 1], 我们就将 [0, 15] 缩放到 [-1, 1] 这个范围就好.
+
+```python
+def translateDNA(pop):
+    return pop.dot(2 ** np.arange(DNA_SIZE)[::-1]) / float(2**DNA_SIZE-1) * X_BOUND[1]
+```
+
+注意, 这里的 pop 是一个储存二进制 DNA 的矩阵, 他的 shape 是这样 (pop_size, DNA_size).
+
+#### 进化
+进化分三步:
+
+- 适者生存 (selection)
+- DNA 交叉配对 (crossover)
+- DNA 变异 (mutation)
+我们用 python 的三个功能, 一个循环表示:
+
+```python
+# 种群 DNA
+pop = np.random.randint(2, size=(POP_SIZE, DNA_SIZE))
+
+F_values = F(translateDNA(pop))
+fitness = get_fitness(F_values)
+pop = select(pop, fitness)      # 按适应度选 pop
+pop_copy = pop.copy()           # 备个份
+for parent in pop:
+    child = croseeover(parent, pop_copy)
+    child = mutate(child)
+    parent[:] = child           # 宝宝变大人
+```
+
+适者生存的 select() 很简单, 我们只要按照适应程度 fitness 来选 pop 中的 parent 就好. fitness 越大, 越有可能被选到.
+
+```python
+def select(pop, fitness):
+    idx = np.random.choice(np.arange(POP_SIZE), size=POP_SIZE, replace=True,
+                           p=fitness/fitness.sum()) # p 就是选它的比例
+    return pop[idx]
+```
+
+接下来进行交叉配对. 方式很简单. 比如这两个 DNA, Y 的点我们取 DNA1 中的元素, N 的点取 DNA2 中的. 生成的 DNA3 就有来自父母的基因了.
+
+```python
+DNA1 = [1, 1, 0, 1, 0, 0, 1]
+       [Y, N, Y, N, N, Y, N]
+DNA2 = [1, 0, 1, 1, 0, 1, 1]
+
+DNA3 = [1, 0, 0, 1, 0, 0, 1]
+```
+
+而 python 写出来也很方便, 从 pop_copy 中随便选一个当另一个父辈 和 parent 进行随机的 crossover:
+
+```python
+def crossover(parent, pop):
+    if np.random.rand() < CROSS_RATE:
+        i_ = np.random.randint(0, POP_SIZE, size=1)  # select another individual from pop
+        cross_points = np.random.randint(0, 2, DNA_SIZE).astype(np.bool)  # choose crossover points
+        parent[cross_points] = pop[i_, cross_points]  # mating and produce one child
+    return parent
+```
+
+mutation 就更好写了, 将某些 DNA 中的 0 变成 1, 1 变成 0.
+
+```python
+def mutate(child):
+    for point in range(DNA_SIZE):
+        if np.random.rand() < MUTATION_RATE:
+            child[point] = 1 if child[point] == 0 else 0
+    return child
+```
+有了这些规则, select, crossover, mutate, 我们就能在程序里上演进化论啦
+
+
+### 实例-Travel Sales Problem
+
+#### 要点
+
+遗传算法 (GA) 算法最主要的就是我们要想明白什么是他的 DNA 和怎么样对个体进行评估 (他们的 Fitness). 这次的旅行商人问题 (之后简称 TSP), 商人需要经过某几个城市, 但是城市之间的距离不一, 我们怎么规划路径, 成了一个复杂的问题. 如果计算每一条可行的路径, 就需要相当大的计算资源. 如果使用 GA, TSP 就能被当成一个非常典型的活学活用 GA 算法的问题. 他的 DNA 编码会有不一样的故事.
+
+![tsp_1.gif](./img/evolution_alg/ga/tsp_1.gif)
+
+#### fitness and DNA
+
+fitness 和 DNA 
+这次的编码 DNA 方式又不一样, 我们可以尝试对每一个城市有一个 ID, 那经历的城市顺序就是按 ID 排序咯. 比如说商人要经过3个城市, 我们就有
+
+0-1-2
+0-2-1
+1-0-2
+1-2-0
+2-0-1
+2-1-0
+
+这6种排列方式. 每一种排列方式我们就能把它当做一种 DNA 序列, 用 numpy 产生这种 DNA 序列的方式很简单.
+
+```python
+>>> np.random.permutation(3)
+# array([1, 2, 0])
+
+```
+
+计算 fitness 的时候, 我们只要将 DNA 中这几个城市连成线, 计算一下总路径的长度, 根据长度, 我们定下规则, 越短的总路径越好, 下面的 fitness0 就用来计算 fitness 啦. 因为越短的路径我们更要价大幅度选择, 所以这里我用到了 fitness1 这种方式.
+
+```python
+fitness0 = 1/total_distance
+fitness1 = np.exp(1/total_distance)
+
+```
+
+#### 进化
+
+同上次一样, 我们用一个 GA class 代替 GA 算法, 这个 class 里面有下面这几个主要功能.
+
+```python
+class GA:
+    def select(self, fitness):
+
+    def crossover(self, parent, pop):
+
+    def mutate(self, child):
+
+    def evolve(self):
+
+```
+
+上面这几个功能的算法在这节内容中有详细介绍. 所以不会再详细说明了. 你也可以去我的 github 看全部代码. 不过我们要注意的是在 crossover 和 mutate 的时候有一点点不一样, 因为对于路径点, 我们不能随意变化. 比如 如果按平时的 crossover, 可能会是这样的结果:
+
+p1=[0,1,2,3] (爸爸)
+
+p2=[3,2,1,0] (妈妈)
+
+cp=[m,b,m,b] (交叉点, m: 妈妈, b: 爸爸)
+
+c1=[3,1,1,3] (孩子)
+
+那么这样的 c1 要经过两次城市 3, 两次城市1, 而没有经过 2, 0. 显然不行. 所以我们 crossover 以及 mutation 都要换一种方式进行. 其中一种可行的方式是这样. 同样是上面的例子.
+
+p1=[0,1,2,3] (爸爸)
+
+cp=[_,b,_,b] (选好来自爸爸的点)
+
+c1=[1,3,_,_] (先将爸爸的点填到孩子的前面)
+
+此时除开来自爸爸的 1, 3. 还有0, 2 两个城市, 但是0,2 的顺序就按照妈妈 DNA 的先后顺序排列. 也就是 p2=[3,2,1,0] 的 0, 2 两城市在 p2 中是先有 2, 再有 0. 所以我们就按照这个顺序补去孩子的 DNA.
+
+c1=[1,3,2,0]
+
+按照这样的方式, 我们就能成功避免在 crossover 产生的问题: 访问多次通过城市的问题了. 用 Python 的写法很简单.
+
+```python
+if np.random.rand() < self.cross_rate:
+    i_ = np.random.randint(0, self.pop_size, size=1)                        # select another individual from pop
+    cross_points = np.random.randint(0, 2, self.DNA_size).astype(np.bool)   # choose crossover points
+    keep_city = parent[~cross_points]                                       # find the city number
+    swap_city = pop[i_, np.isin(pop[i_].ravel(), keep_city, invert=True)]   # 找到与爸爸不同的城市
+    parent[:] = np.concatenate((keep_city, swap_city))
+
+```
+在 mutate 的时候, 也是找到两个不同的 DNA 点, 然后交换这两个点就好了.
+
+```python
+for point in range(self.DNA_size):
+    if np.random.rand() < self.mutate_rate:
+        swap_point = np.random.randint(0, self.DNA_size)
+        swapA, swapB = child[point], child[swap_point]
+        child[point], child[swap_point] = swapB, swapA
+```
+
+在 GA class 中, 其他的部分就和以前的例子非常相近了, 为了不显得累赘, 我也不会细说了, 可以参考我之前的教程, 也可以在我 github 中查看整套代码.
+
+最后的循环主框架还是没变, 就像下面这么简单.
+
+```python
+ga = GA(...)
+
+for generation in range(N_GENERATIONS):
+    fitness = ga.get_fitness()
+    ga.evolve(fitness)
+
+```
+
+#### 附加例子 寻找最近的路线
+
+如果你还想多看一个例子, 我还有一个例子, 但是不会细说, 应为和上面的例子非常接近. 只要你懂了上面的, 就懂了接下来的例子了.
+这个例子中的 DNA 形式又不一样, 其实每条路线都是由 “左上, 右下, 右上…” 这样的移动顺序组成. 所以整个路线 DNA 就是一连串的移动方向. 在移动方向上变异和交配, 就能找到比较好的路线了
+
+![tsp_2.gif](./img/evolution_alg/ga/tsp_2.gif)
+
+
+### Microbial Genetic Algorithm
+
+[论文 The Microbial Genetic Algorithm](https://www.semanticscholar.org/paper/The-Microbial-Genetic-Algorithm-Harvey/7b0dc335e46ea952ebb0f211067324fecd173c96)
+
+#### 要点
+说到遗传算法 (GA), 有一点不得不提的是如何有效保留好的父母 (Elitism), 让好的父母不会消失掉. 这也是永远都给自己留条后路的意思. Microbial GA (后面统称 MGA) 就是一个很好的保留 Elitism 的算法. 一句话来概括: 在袋子里抽两个球, 对比两个球, 把球大的放回袋子里, 把球小的变一下再放回袋子里, 这样在这次选着中, 大球不会被改变任何东西, 就被放回了袋子, 当作下一代的一部分.
+
+#### 算法
+
+![microbial_ga](./img/evolution_alg/ga/microbial_ga.png)
+
+像最开始说的那样, 我们有一些 population, 每次在进化的时候, 我们会从这个 pop 中随机抽 2 个 DNA 出来, 然后对比一下他们的 fitness, 我们将 fitness 高的定义成 winner, 反之是 loser. 我们不会去动任何 winner 的 DNA, 要动手脚的只有这个 loser, 比如对 loser 进行 crossover 和 mutate. 动完手脚后将 winner 和 loser 一同放回 pop 中.
+
+通过这样的流程, 我们就不用担心有时候变异着变异着, 那些原本好的 pop 流失掉了, 有了这个 MGA 算法, winner 总是会被保留下来的. GA 中的 Elitism 问题通过这种方法巧妙解决了.
+
+
+
+## Evolution Strategy(进化策略)
+接着上回提到的遗传算法, 来说一说 ** 另一种使用进化理论的优化模式-进化策略 (Evolution Strategy). **
+
+### 进化算法
+![ES1](./img/evolution_alg/es/ES1.png)
+
+** 遗传算法和进化策略共享着一些东西. ** 他们都用遗传信息, 比如 DNA 染色体, 一代代传承, 变异. 来获取上一代没有的东西.
+
+![ES2](./img/evolution_alg/es/ES2.png)
+
+然后通过适者生存, 不适者淘汰的这一套理论不断进化着. 我们的祖先, 通过不断变异, 生存淘汰, 从猴子变成人也就是这么回事.既然进化策略或遗传算法都用到了进化的原则, 他们到底有哪些不同呢? 他们各自又适用于哪些问题呢?
+
+### 遗传算法
+
+![ES3](./img/evolution_alg/es/ES3.png)
+我们之前说到, 一般的遗传算法使用的 DNA 是二进制编码的, 爸妈的 DNA 通过交叉配对, 组成宝宝的 DNA, 宝宝也会通过一定的变异获得新的功能. 但一般的进化策略却有些不同
+
+### 进化策略
+
+![ES4](./img/evolution_alg/es/ES4.png)
+
+爸妈的 DNA 不用再是 01 的这种形式, 我们可以用实数来代替, 咋一看, 觉得牛逼了起来, 因为我们抛开了二进制的转换问题, 从而能解决实际生活中的很多由实数组成的真实问题. 比如我有一个关于 x 的公式, 而这个公式中其他参数, 我都能用 DNA 中的实数代替, 然后进化我的 DNA, 也就是优化这个公式啦. 这样用起来, 的确比遗传算法方便. 同样, 在制造宝宝的时候, 我们也能用到交叉配对, 一部分来自爸爸, 一部分来自妈妈. <font color=red>可是我们应该如何变异呢? 遗传算法中简单的翻牌做法貌似在这里行不通. 不过进化策略中的另外一个因素起了决定性的作用. 这就是变异强度. 简单来说, 我们将爸妈遗传下来的值看做是正态分布的平均值, 再在这个平均值上附加一个标准差, 我们就能用正态分布产生一个相近的数了. 比如在这个8.8位置上的变异强度为1, 我们就按照1的标准差和8.8的均值产生一个离8.8的比较近的数, 比如8.7. </font>然后对宝宝每一位上的值进行同样的操作. 就能产生稍微不同的宝宝 DNA 啦. 所以, ** 变异强度也可以被当成一组遗传信息从爸妈的 DNA 里遗传下来. 甚至遗传给宝宝的变异强度基因也能变异. ** 进化策略的玩法也能多种多样.
+
+### 总结
+
+![ES5](./img/evolution_alg/es/ES5.png)
+
+我们总结一下, <font color=red>在进化策略中, 可以有两种遗传性系被继承给后代, 一种是记录所有位置的均值, 一种是记录这个均值的变异强度, 有了这套体系, 我们就能更加轻松自在的在实数区间上进行变异了. </font> 这种思路甚至还能被用在神经网络的参数优化上, 因为这些参数本来就是一些实数. 在之后的视频中我们会继续提到当今比较流行的将人工神经网络结合上遗传算法或者进化策略的方法.
+
+
+## Neuro-Evolution(神经网络进化)
+
+在进化算法这系列的内容中我做了很久铺垫, 现在总算到了最前沿最先进的技术了. 我们知道机器学习, 深度学习很多时候都和神经网络是分不开的. 那将进化和神经网络结合也在近些年有了突破.
+
+### 人工神经网络和生物神经网络
+![ES1](./img/evolution_alg/ne/NE1.png)
+
+你大多数时候所见到的人工神经网络是 ** 一种计算机能理解的数学模型, 这个模型将观测到的信息通过类似电信号的方式正向传播, 获取深程度的理解, 然后输出自己的判断. 最后通过对比自己的判断和真实数据, 将误差反向传播, 更新自己的网络参数.  **
+
+** 但是生物中的神经网络却没有这一套反向传播的系统, 它往往是只产生正向传播, 然后通过刺激产生新的神经联结, 用这些产生的联结理解事物.  **这就是大家为什么都在说人工神经网络是和生物神经网络不同的原因之一. 但是早在二十一世纪初, 科学家们已经将生物神经网络的这套系统用程序给实现了, 我们就来看看他们是如何应用的, 他们的优势和劣势各是什么?如果用进化理论来实现神经网络的更新,
+
+### 遗传算法 和 进化策略 加 神经网络
+
+![ES2](./img/evolution_alg/ne/NE2.png)
+
+我们之前提过了两种方式, 遗传算法 (Genetic Algorithm) 和 进化策略 (Evolution Strategy). 这两种方式的神经网络都有了突破性的发展.不管是遗传算法还是进化策略, 他们都是采取了进化理论中的某些重要部分. 
+
+比如遗传算法中我们会有来自父母的两组神经网络, 通过将这两个神经网络交叉配对, 产生宝宝的神经网络, 然后将宝宝的神经网络变异, 来获取新的能力. 最后将所有宝宝们放入残酷的现实, 让他们适者生存不适者淘汰. 
+
+而如果使用进化策略, 我们更偏向于先固定神经网络的结构, 让这个结构蚕卵, 生出很多和原始神经网络结构相同, 但联结强度稍稍不同的网络. 这些宝宝网络中肯定有好有坏, 进化策略中有趣的一步就来了, 下一代的爸爸是所有宝宝的综合体, 这个综合体中, 好宝宝的联结会占有更多比例, 坏宝宝占有更少比例. 通过这种形式让好宝宝渐渐主宰这个生存环境. 我们知道, 反向传播, 靠计算梯度的神经网络非常适合做监督学习, 比如让计算机识别图片, 在这方面, 使用进化理论的神经网络的确暂时比不上这些梯度的神经网络. 原因很简单.
+
+### 梯度 or 进化
+
+![ES3](./img/evolution_alg/ne/NE3.png)
+
+在梯度下降中, 我们需要的只是梯度, 让这个神经网络的参数滑到梯度躺平的地方就好了, 因为梯度给你指明了一个优化的方向, 所以如果是监督学习, 优化起来会非常快. 
+
+而神经网络的进化, 使用的却是另一种手段. 用原始的点创造出很多新的点, 然后通过新的点来确定下一代的起点在哪. 这样的循环再不断地继续. 可以想象, 如果在监督学习中, 我们需要不断产生非常多新的网络, 测试新的网络, 这将比梯度法慢很多. 但是不使用梯度的方法还有一个好处, 那就是有效避免局部最优.
+
+### 局部 and 全局最优
+![ES4](./img/evolution_alg/ne/NE4.png)
+
+大家知道, 在梯度下降中, 神经网络很容易会走到一个局部最优, 但是如果是使用基于遗传算法的神经网络, 这个优化过程虽然慢, 我们的宝宝网络却可以随时跳出局部最优, 因为它完全不受梯度的限制. 而且除了监督学习, 我们还能 ** 用进化理论的神经网络做强化学习, 在这点上, 已经有最新的研究指出, 基于进化策略的神经网络完全有能力替代传统的基于梯度的强化学习方法. **
+
+### 并行强化学习
+
+![ES5](./img/evolution_alg/ne/NE5.png)
+
+因为涉及到了很多的宝宝, 我们大可将这些宝宝利用计算机强大的并行能力有效的计算. ** 研究指出, 如果合理的运用这种能力, 他们的训练效果可比传统的强化学习快多了. 或许当基于梯度的方法达到瓶颈后, 这些基于进化的方法能为我们打开另一扇窗. **
+
+
+
+
+
+# 其它应用
+
+## 汽车状态分类器
+
+https://morvanzhou.github.io/tutorials/machine-learning/ML-practice/build-car-classifier-from-scratch2/
