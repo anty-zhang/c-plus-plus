@@ -4,6 +4,8 @@
 Visualize Genetic Algorithm to find the shortest path for travel sales problem.
 Visit my tutorial website for more: https://morvanzhou.github.io/tutorials/
 """
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -43,12 +45,65 @@ class GA(object):
         return fitness, total_distance
 
     def select(self, fitness):
-        idx = np.random.choice(np.range(self.pop_size), size=self.pop_size, replace=True, p=fitness/fitness.sum())
-        return self.pop(idx)
+        idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=fitness/fitness.sum())
+        return self.pop[idx]
 
     def crossover(self, parent, pop):
         if np.random.rand() < self.cross_rate:
             i_ = np.random.randint(0, self.pop_size, size=1)    # select another individual from pop
             cross_points = np.random.randint(0, 2, self.DNA_size).astype(np.bool)   # choose crossover points
+            keep_city = parent[~cross_points]
+            swap_city = pop[i_, np.isin(pop[i_].ravel(), keep_city, invert=True)]
+            parent[:] = np.concatenate((keep_city, swap_city))
+
+        return parent
+
+    def mutate(self, child):
+        for point in range(self.DNA_size):
+            if np.random.rand() < self.mutation_rate:
+                swap_point = np.random.randint(0, self.DNA_size)
+                swapA, swapB = child[point], child[swap_point]
+                child[point], child[swap_point] = swapB, swapA
+
+        return child
+
+    def evolve(self, fitness):
+        pop = self.select(fitness)
+        pop_copy = pop.copy()
+        for parent in pop:
+            child = self.crossover(parent, pop_copy)
+            child = self.mutate(child)
+            parent[:] = child
+
+        self.pop = pop
 
 
+class TravelSalesPerson(object):
+    def __init__(self, n_cities):
+        self.city_position = np.random.rand(n_cities, 2)
+        plt.ion()
+
+    def plotting(self, lx, ly, total_d):
+        plt.cla()
+        plt.scatter(self.city_position[:, 0].T, self.city_position[:, 1].T, s=100, c='k')
+        plt.plot(lx.T, ly.T, 'r-')
+        plt.text(-0.05, -0.05, "Total distance=%.2f" % total_d, fontdict={'size': 20, 'color': 'red'})
+        plt.xlim((-0.1, 1.1))
+        plt.ylim((-0.1, 1.1))
+        plt.pause(0.01)
+
+
+ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)
+
+env = TravelSalesPerson(N_CITIES)
+
+for generation in range(N_GENERATIONS):
+    lx, ly = ga.translateDNA(ga.pop, env.city_position)
+    fitness, total_distance = ga.get_fitness(lx, ly)
+    ga.evolve(fitness)
+    best_idx = np.argmax(fitness)
+    print("Gen:", generation, "|best fit: %.2f" % fitness[best_idx])
+    env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
+
+plt.ioff()
+plt.show()

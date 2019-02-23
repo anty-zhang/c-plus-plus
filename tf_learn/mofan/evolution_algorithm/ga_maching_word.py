@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Visualize Genetic Algorithm to match the target phrase.
 Visit my tutorial website for more: https://morvanzhou.github.io/tutorials/

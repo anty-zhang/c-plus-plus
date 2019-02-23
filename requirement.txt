@@ -1,0 +1,15 @@
+ipython==6.5.0
+ipython-genutils==0.2.0
+jieba==0.39
+Markdown==2.6.11
+matplotlib==2.2.3
+numpy==1.15.4
+pandas==0.23.4
+Pillow==5.3.0
+protobuf==3.6.0
+requests==2.19.1
+scikit-learn==0.20.0
+scipy==1.1.0
+tensorflow==1.9.0
+termcolor==1.1.0
+urllib3==1.23
