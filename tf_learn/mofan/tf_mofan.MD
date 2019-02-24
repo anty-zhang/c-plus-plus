@@ -922,6 +922,232 @@ for generation in range(N_GENERATIONS):
 
 我们总结一下, <font color=red>在进化策略中, 可以有两种遗传性系被继承给后代, 一种是记录所有位置的均值, 一种是记录这个均值的变异强度, 有了这套体系, 我们就能更加轻松自在的在实数区间上进行变异了. </font> 这种思路甚至还能被用在神经网络的参数优化上, 因为这些参数本来就是一些实数. 在之后的视频中我们会继续提到当今比较流行的将人工神经网络结合上遗传算法或者进化策略的方法.
 
+### 实例一
+
+#### 要点
+
+![example_1_1](./img/evolution_alg/es/example_1_1.gif)
+
+** 进化策略 (Evolution Strategy) 后面都简称 ES. 它和 遗传算法 GA 是好兄弟. ** 步骤和流程都非常相似. 如果你对遗传算法也感兴趣, 前面几节内容都是有关于遗传算法的. ** 要我用一句话概括ES: 在程序里生宝宝, 杀死不乖的宝宝, 让乖宝宝继续生宝宝. ** 乍一听, 怎么和 GA 是完全一样的逻辑呢? 没关系, 我们在接下来的内容中揭晓他们的不同.
+
+#### 和遗传算法的异同
+
+遗传算法 (后面简称 GA) 和 ES 真 TM 差不多.
+
+- 选好父母进行繁殖 (GA); 先繁殖, 选好的孩子 (ES)
+
+- 通常用二进制编码 DNA (GA); 通常 DNA 就是实数, 比如 1.221 (ES)
+
+- 通过随机让 1 变成 0 这样变异 DNA (GA); 通过正态分布(Normal distribution)变异 DNA (ES)
+
+具体来说, 传统的 GA 的 DNA 形式是这样:
+
+DNA=11010010
+
+而传统的 ES DNA 形式分两种, 它有两条 DNA. 一个 DNA 是控制数值的, 第二个 DNA 是控制这个数值的变异强度. 比如一个问题有4个变量. 那一个 DNA 中就有4个位置存放这4个变量的值 (这就是我们要得到的答案值). 第二个 DNA 中就存放4个变量的变动幅度值.
+
+DNA1=1.23, -0.13, 2.35, 112.5 可以理解为4个正态分布的4个平均值.
+
+DNA2=0.1, 2.44, 5.112, 2.144 可以理解为4个正态分布的4个标准差.
+
+所以这两条 DNA 都需要被 crossover 和 mutate.
+
+#### 进化
+
+写基础的 ES 算法其实很简单. 我总结起来, 其实就两个功能, make_kid 和 kill_bad
+
+```python
+def make_kid(pop, n_kid):
+    # 根据正态分布生孩子
+
+def kill_bad(pop, kids):
+    # 杀了那些坏孩子和坏父母
+```
+对于今天的问题, 我们就是要找这张图中的最高点.
+
+![example_1_1](./img/evolution_alg/es/example_1_2.png)
+
+
+而这个点只有一个, 所以我们的 DNA 的长度就只有一个. 我们用一个 python 字典来存这两种 DNA 的信息. 这里 DNA 存的是均值, mut_strength 存的是标准差.
+
+```python
+pop = dict(DNA=5 * np.random.rand(1, DNA_SIZE).repeat(POP_SIZE, axis=0),   # initialize the pop DNA values
+           mut_strength=np.random.rand(POP_SIZE, DNA_SIZE))
+
+```
+
+训练的主循环, (生死循环… 觉得血腥味很重..为什么我的遗传算法教程就没这么重血腥味呢..) 如下:
+
+```python
+for _ in range(N_GENERATIONS):
+    kids = make_kid(pop, N_KID)     # 生宝宝
+    pop = kill_bad(pop, kids)       # 杀宝宝
+```
+
+首先的 make_kid 功能. 我们随机找到一对父母, 然后将父母的 DNA 和 mut_strength 基因都 crossover 给 kid. 然后再根据 mut_strength mutate 一下 kid 的 DNA. 也就是用正态分布抽一个 DNA sample. 而且 mut_strength 也能变异. 将变异强度变异以后, 他就能在快收敛的时候很自觉的逐渐减小变异强度, 方便收敛.
+
+```python
+def make_kid(pop, n_kid):
+    # generate empty kid holder
+    kids = {'DNA': np.empty((n_kid, DNA_SIZE))}
+    kids['mut_strength'] = np.empty_like(kids['DNA'])
+    for kv, ks in zip(kids['DNA'], kids['mut_strength']):
+        # crossover (roughly half p1 and half p2)
+        p1, p2 = np.random.choice(np.arange(POP_SIZE), size=2, replace=False)
+        cp = np.random.randint(0, 2, DNA_SIZE, dtype=np.bool)  # crossover points
+        kv[cp] = pop['DNA'][p1, cp]
+        kv[~cp] = pop['DNA'][p2, ~cp]
+        ks[cp] = pop['mut_strength'][p1, cp]
+        ks[~cp] = pop['mut_strength'][p2, ~cp]
+
+        # mutate (change DNA based on normal distribution)
+        ks[:] = np.maximum(ks + (np.random.rand(*ks.shape)-0.5), 0.)    # must > 0
+        kv += ks * np.random.randn(*kv.shape)
+        kv[:] = np.clip(kv, *DNA_BOUND)    # clip the mutated value
+    return kids
+```
+ 
+接下来到了惊心动魄的杀人时间. 根据适应度 fitness 选择适应度最靠前的一些人, 抛弃掉那些适应度不佳的人. 这个很简单.
+
+```python
+def kill_bad(pop, kids):
+    # put pop and kids together
+    for key in ['DNA', 'mut_strength']:
+        pop[key] = np.vstack((pop[key], kids[key]))
+
+    fitness = get_fitness(F(pop['DNA']))            # calculate global fitness
+    idx = np.arange(pop['DNA'].shape[0])
+    good_idx = idx[fitness.argsort()][-POP_SIZE:]   # selected by fitness ranking (not value)
+    for key in ['DNA', 'mut_strength']:
+        pop[key] = pop[key][good_idx]
+    return pop
+```
+
+### 实例2-－（1+1）－ES
+
+#### 要点
+
+(1+1)-ES 是 ES 进化策略的一种形式, 也是众多形式中比较方便有效的一种. 接下来我们来细说他们的类别. 如果要我用 ** 一句话来概括 (1+1)-ES: 一个爸爸和一个孩子的战争 **
+
+本节要实践的内容提前看:
+
+![example_2_1](./img/evolution_alg/es/example_2_1.gif)
+
+#### 不同的形式
+
+像上面看到的, 统一来说都是 (μ/ρ +, λ)-ES, (1+1)-ES 只是一种特殊形式. 这里的 μ 是 population 的数量, ρ 是从 population 中选取的个数, 用来生成宝宝的. λ 是生成的宝宝数, 如果采用的是 “+” 形式的, 就是使用将 ρ + λ 混合起来进行适者生存, 如果是 “,” 形式, 那么就是只使用 λ 进行适者生存.
+
+形式多种多样有些头疼. 不过在这一节中, 我们考虑的只是一个爸爸, 生成一个宝宝, 然后在爸爸和宝宝中进行适者生存的游戏, 选择爸爸和宝宝中比较好的那个当做下一代的爸爸. (1+1)-ES 总结如下:
+
+- 有一个爸爸
+
+- 根据爸爸变异出一个宝宝
+
+- 在爸爸和宝宝中选好的那个变成下一代爸爸
+
+#### 进化
+
+同上节一样, 这次我们还是两个功能, make_kid 和 kill_bad
+
+```python
+def make_kid(parent):
+    # 根据 parent 正态分布生一个 kid
+
+def kill_bad(parent, kid):
+    # 杀了坏孩子或者坏爸爸
+```
+
+所以所有的操作都只有一个数量的 pop. 这时我们在 (1+1)-ES 中的策略是 parent DNA 中只有存平均值, 没有变异强度 (标准差). 这次的变异强度 MUT_STRENGTH 是一个 global variable. 一个标量表示它就好.
+
+```python
+def make_kid(parent):
+    k = parent + MUT_STRENGTH * np.random.randn(DNA_SIZE)
+    return k
+```
+
+在 kill_bad 中, 我们选择更为适合的, 不管是爸爸还是孩子, 只要是适合的就留下, 不适合的杀掉. 但是还有注意的一点是, 在这一步我们还要对 MUT_STRENGTH 进行一点改变. 改变的方法遵循了 1/5 successful rule. 这个方法是 ES 的开山鼻祖提出来的. 文献在这:
+
+Rechenberg, I. 1973. Evolutionsstrategie – Optimierung technischer Systeme nach Prinzipien der biologischen Evolution, Frommann-Holzboog.
+
+网上有个课件”[Tutorial: CMA-ES — Evolution Strategies and Covariance Matrix Adaptation](https://www.lri.fr/~hansen/gecco2011-CMA-ES-tutorial.pdf)”里面一张图, 让你秒懂这个1/5的意思.
+
+![example_2_2](./img/evolution_alg/es/example_2_2.png)
+
+图中的意思是, 还没到收敛的时候(上面左图), 我们增大 MUT_STRENGTH, 如果已经快到收敛了(上右图), 我们就减小 MUT_STRENGTH. 那如何判断是否快到收敛没呢, 就是如果有1/5的变异比原始的 parent 好的话, 就是快收敛了(像上右图). 在上左图中, 有一半比原始 parent 好, 一半比较差, 所以还没到收敛. 在上面提到的课件中, 用一个公式就能概括这种1/5关系.
+
+![example_2_3](./img/evolution_alg/es/example_2_3.png)
+
+最后仿照上面的课件, 我写下了下面的 kill_bad 功能.
+
+```python
+def kill_bad(parent, kid):
+    global MUT_STRENGTH
+    fp = get_fitness(F(parent))[0]
+    fk = get_fitness(F(kid))[0]
+    p_target = 1/5
+    if fp < fk:     # kid better than parent
+        parent = kid
+        ps = 1.     # kid win -> ps = 1 (successful offspring)
+    else:
+        ps = 0.
+    # adjust global mutation strength
+    MUT_STRENGTH *= np.exp(1/np.sqrt(DNA_SIZE+1) * (ps - p_target)/(1 - p_target))
+    return parent
+```
+加上训练的主循环, 就大事告成.
+
+```python
+parent = 5 * np.random.rand(DNA_SIZE)   # parent DNA
+
+for _ in range(N_GENERATIONS):
+    kid = make_kid(parent)               # 生宝宝
+    parent = kill_bad(parent, kid)       # 杀宝宝
+```
+
+### 实例3-－Natural Evolution Strategy(用ES优化梯度下降的方向)
+
+[论文 Natural evolution strategies](http://www.jmlr.org/papers/volume15/wierstra14a/wierstra14a.pdf)
+
+#### 要点
+Natural ES 后面简称 NES, 应该就是算一种用适应度诱导的梯度下降法, 如果要我用 ** 一句话来概括 NES: 生宝宝, 用好宝宝的梯度辅助找到前进的方向 **
+
+本节要实践的内容提前看:
+
+![example_3_1](./img/evolution_alg/es/example_3_1.gif)
+
+
+#### NES 算法
+
+![example_3_1](./img/evolution_alg/es/example_3_2.png)
+
+宝宝们的梯度是这个 $\nabla_\theta log\pi(z_k|\theta)$ 加上这些宝宝们的 fitness $f(z_k)$, 用梯度乘以 fitness 就是说, 加大力度往带来好 fitness 的梯度下降. 所以之后的宝宝们就会越来越多的下降到最优点啦. 那么我们要梯度下降的参数则是那些正态分布的均值和均方差.
+
+NES 的方法其实和强化学习中 Policy Gradient 的方法非常接近. 简单来概括一下它们的不同: 在行为的策略上, PG 是扰动 Action, 不同的 action 带来不同的 reward, 通过 reward 大小对应上 action 来计算 gradient, 再反向传递 gradient. 但是 ES 是扰动 神经网络中的 Parameters, 不同的 parameters 带来不同的 reward, 通过 reward 大小对应上 parameters 来按比例更新原始的 parameters.
+
+#### 进化
+Tensorflow 是神经网络模块, 虽然我们今天不拿它来做神经网络, 但是首先还是需要搭建一个计算图纸, 之后再往图纸里面灌数据. 不断自动梯度下降, 提升参数. 关于正态分布, 我们从 tf 中 import MultivariateNormalFullCovariance. 之前提出的要学习的变量包括均值和均方差, 但是到了多变量的正态分布, 我们要学习的就是协方差矩阵 Covariance matrix. 如果不太了解 Covariance matrix, 你就把他想象成要学习的均方差就行, 意思差不多.
+
+```python
+import tensorflow as tf
+from tensorflow.contrib.distributions import MultivariateNormalFullCovariance
+
+mean = tf.Variable(tf.random_normal([2, ], 13., 1.), dtype=tf.float32)
+cov = tf.Variable(5. * tf.eye(DNA_SIZE), dtype=tf.float32)
+mvn = MultivariateNormalFullCovariance(loc=mean, covariance_matrix=cov)
+make_kid = mvn.sample(N_POP)
+```
+我们用 mean, cov 当作要学的变量, 放入 MultivariateNormalFullCovariance 中. 这时的 mvn 就是这个多变量正态分布啦. 采样的时候呢, 我们就能用 mvn.sample(N_POP). 记住, make_kid 目前只是在计算图纸上的功能, 还没被运行, 之后调用的时候才被运行.
+
+
+接下来搭建一些计算图纸上其他的东西, tfkids_fit 是将要被传入到计算图纸中的 fitness 值. tfkids 是之前 make_kid 采样出来的宝宝 DNA 们. 神经网络中有一个东西叫做误差, 有时候叫做 loss 或者 cost, 通过误差反向传递, 我们就能更新前面的 Variable 变量了. 为了变成 tf 形式, 之前的算法中 (梯度*fitness), 就相当于 mvn.log_prob(tfkids)*tfkids_fit.
+
+```python
+tfkids_fit = tf.placeholder(tf.float32, [N_POP, ])
+tfkids = tf.placeholder(tf.float32, [N_POP, DNA_SIZE])
+loss = -tf.reduce_mean(mvn.log_prob(tfkids)*tfkids_fit)         # log prob * fitness
+train_op = tf.train.GradientDescentOptimizer(LR).minimize(loss) # compute and apply gradients for mean and cov
+```
+
 
 ## Neuro-Evolution(神经网络进化)
 

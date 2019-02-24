@@ -15,4 +15,7 @@ conda create -n tf python=3.6
 conda activate tf
 conda deactivate
 
+# 安装软件包
+conda install -n tf tensorflow==1.12.0
+
 ```
