@@ -3,6 +3,8 @@
 
 # 学习连接
 
+莫烦的学习笔记
+
 [一文学会用 Tensorflow 搭建神经网络](https://www.jianshu.com/p/e112012a4b2d)
 
 [莫烦tensorflow](https://morvanzhou.github.io/tutorials/machine-learning/tensorflow/1-1-B-NN/)
@@ -1151,16 +1153,18 @@ train_op = tf.train.GradientDescentOptimizer(LR).minimize(loss) # compute and ap
 
 ## Neuro-Evolution(神经网络进化)
 
+### 什么是神经网络进化
+
 在进化算法这系列的内容中我做了很久铺垫, 现在总算到了最前沿最先进的技术了. 我们知道机器学习, 深度学习很多时候都和神经网络是分不开的. 那将进化和神经网络结合也在近些年有了突破.
 
-### 人工神经网络和生物神经网络
+#### 人工神经网络和生物神经网络
 ![ES1](./img/evolution_alg/ne/NE1.png)
 
 你大多数时候所见到的人工神经网络是 ** 一种计算机能理解的数学模型, 这个模型将观测到的信息通过类似电信号的方式正向传播, 获取深程度的理解, 然后输出自己的判断. 最后通过对比自己的判断和真实数据, 将误差反向传播, 更新自己的网络参数.  **
 
 ** 但是生物中的神经网络却没有这一套反向传播的系统, 它往往是只产生正向传播, 然后通过刺激产生新的神经联结, 用这些产生的联结理解事物.  **这就是大家为什么都在说人工神经网络是和生物神经网络不同的原因之一. 但是早在二十一世纪初, 科学家们已经将生物神经网络的这套系统用程序给实现了, 我们就来看看他们是如何应用的, 他们的优势和劣势各是什么?如果用进化理论来实现神经网络的更新,
 
-### 遗传算法 和 进化策略 加 神经网络
+#### 遗传算法 和 进化策略 加 神经网络
 
 ![ES2](./img/evolution_alg/ne/NE2.png)
 
@@ -1170,7 +1174,7 @@ train_op = tf.train.GradientDescentOptimizer(LR).minimize(loss) # compute and ap
 
 而如果使用进化策略, 我们更偏向于先固定神经网络的结构, 让这个结构蚕卵, 生出很多和原始神经网络结构相同, 但联结强度稍稍不同的网络. 这些宝宝网络中肯定有好有坏, 进化策略中有趣的一步就来了, 下一代的爸爸是所有宝宝的综合体, 这个综合体中, 好宝宝的联结会占有更多比例, 坏宝宝占有更少比例. 通过这种形式让好宝宝渐渐主宰这个生存环境. 我们知道, 反向传播, 靠计算梯度的神经网络非常适合做监督学习, 比如让计算机识别图片, 在这方面, 使用进化理论的神经网络的确暂时比不上这些梯度的神经网络. 原因很简单.
 
-### 梯度 or 进化
+#### 梯度 or 进化
 
 ![ES3](./img/evolution_alg/ne/NE3.png)
 
@@ -1178,19 +1182,507 @@ train_op = tf.train.GradientDescentOptimizer(LR).minimize(loss) # compute and ap
 
 而神经网络的进化, 使用的却是另一种手段. 用原始的点创造出很多新的点, 然后通过新的点来确定下一代的起点在哪. 这样的循环再不断地继续. 可以想象, 如果在监督学习中, 我们需要不断产生非常多新的网络, 测试新的网络, 这将比梯度法慢很多. 但是不使用梯度的方法还有一个好处, 那就是有效避免局部最优.
 
-### 局部 and 全局最优
+#### 局部 and 全局最优
 ![ES4](./img/evolution_alg/ne/NE4.png)
 
 大家知道, 在梯度下降中, 神经网络很容易会走到一个局部最优, 但是如果是使用基于遗传算法的神经网络, 这个优化过程虽然慢, 我们的宝宝网络却可以随时跳出局部最优, 因为它完全不受梯度的限制. 而且除了监督学习, 我们还能 ** 用进化理论的神经网络做强化学习, 在这点上, 已经有最新的研究指出, 基于进化策略的神经网络完全有能力替代传统的基于梯度的强化学习方法. **
 
-### 并行强化学习
+#### 并行强化学习
 
 ![ES5](./img/evolution_alg/ne/NE5.png)
 
 因为涉及到了很多的宝宝, 我们大可将这些宝宝利用计算机强大的并行能力有效的计算. ** 研究指出, 如果合理的运用这种能力, 他们的训练效果可比传统的强化学习快多了. 或许当基于梯度的方法达到瓶颈后, 这些基于进化的方法能为我们打开另一扇窗. **
 
 
+### 神经进化
+[NEAT 论文 (Evolving Neural Networks through Augmenting Topologies)](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
 
+[Efficient evolution of neural network topologies](http://nn.cs.utexas.edu/downloads/papers/stanley.cec02.pdf)
+
+[OpenAI 的 Evolution Strategies as a Scalable Alternative to Reinforcement Learning](https://blog.openai.com/evolution-strategies/)
+
+#### 要点
+
+神经网络在当今是一种迅速发展的机器学习方式, 使用反向传播的神经网络更是被推向了一轮又一轮的高峰, 可是我们的视野请不要被反向传播的神经网络变得狭隘. 因为使用神经网络的机器学习方法还有这么一种叫做: 神经进化 (NeuroEvolution). 这种神经网络个人认为是更接近于生物的神经网络系统, 因为他和生物神经网络一样, 并没有反向传播这一步. 主导它解决问题的方式就是 “进化”, 而反向传播的神经网络解决问题的方式, 我们可以看作是 “优化”.
+
+以下是我在 Youtube 中搜索看到大家都拿 Neuro Evolution 做的小实验. 看上去很高大上呀. 是不是又激情澎湃了.
+
+![neuro_evolution_0](./img/evolution_alg/ne/neuro_evolution_0.mp4)
+
+这些是上面实验的部分链接 ( 马里奥, 马里奥, 微生物进化)
+
+具体来说, ** Neuro Evolution 其实可以在很多方面来处理问题. 比如用它来做监督学习 (不过在这点上一般没有反向传播的神经网络学得快, 我们在下节内容里会做一个简单的监督学习例子), 还有可以拿它来做强化学习 (这和传统的强化学习 Reinforcement Learning 是有的一拼的, 在之后内容中我们使用 gym 模块来实现 NeuroEvolution 的强化学习). **
+
+#### 神经网络进化的方式
+说到进化, 我们之前看到了在遗传算法 (Genetic Algorithm) 中, 种群 Population 是通过不同的 DNA 配对, DNA 变异来实现物种的多样性, 然后通过自然选择 (Natural Selection), 繁衍下一代来实现 “适者生存, 不适者淘汰” 这条定律. 在神经网络中我们如何使用这种规律呢.
+
+<font size=4 color='red'>尝试1: 固定神经网络形态 (Topology), 改变参数 (weight) </font>
+
+这种思路很简单, 我们有一个全连接神经网络, 像下图:
+
+![neuro_evolution_1](./img/evolution_alg/ne/neuro_evolution_1.png)
+
+通过不断尝试变异, 修改链接中间的 weight, 改变神经网络的预测结果, 保留预测结果更准确的, 淘汰不那么准确的. 在这方面, OpenAI 在2017年做出了一个有贡献的研究. 他们将进化策略 (Evolution Strategy) 衍生到神经网络, 然后不断进化神经网络中的参数. 他们的实验结果都能够媲美很多强化学习方法, 比如 Q-learning, Policy Gradient.
+
+
+
+<font size=4 color='red'>尝试2: 修改参数 和 形态 </font>
+
+这种变化更多, 除了参数, 形态也是能够改变的. 我们待会要提到的 NEAT 算法就是这样一种. 因为能够变化形态, 所以在 NEAT 中, 并不存在神经层这种东西.
+
+![neuro_evolution_2](./img/evolution_alg/ne/neuro_evolution_2.jpg)	
+
+对比这两种不同的方式, 我们可以想象肯定是越能变化的, 结果会越好啦. 因为它能够探索的形态结构越多, 找到好方法的机会就越大. 而且还有一个优点就是, NEAT 可以最小化结构. 换句话说如果你拿一个 50 层的神经网络训练, 但是要解决的问题很简单, 并不会用到那么复杂的神经网络, 越多的层结构也是一种浪费, 所以用 NEAT 来自己探索需要使用多少链接, 他就能忽略那些没用的链接, 所以神经网络也就比较小, 而且小的神经网络运行也快嘛.
+
+#### NEAT算法 -- 遗传算法
+
+NEAT 是一种典型的遗传算法, 的算法详细解说可以参考这篇原始的 paper (Evolving Neural Networks through Augmenting Topologies), 如果想偷懒, 这篇在 conference 上的浓缩版(Efficient evolution of neural network topologies)也是很好的阅读材料.
+
+简单来说, NEAT 有几个关键步骤:
+
+- 使用 创新号码 (Innovation ID) 对神经网络的 直接编码 (direct coding)
+- 根据 innovation ID 进行 交叉配对 (crossover)
+- 对 神经元 (node), 神经链接 (link) 进行 基因突变 (mutation)
+- 尽量保留 生物多样性 (Speciation) (有些不好的网络说不定突然变异成超厉害的)
+- 通过初始化只有 input 连着 output 的神经网络来尽量减小神经网络的大小 (从最小的神经网络结构开始发展)
+
+我们再来具体看看他是怎么 搭建/交叉/变异 神经网络的. 之后的用图都是上面提到的 paper 中的.
+
+![neuro_evolution_3](./img/evolution_alg/ne/neuro_evolution_3.png)
+
+上面的图你可以想象成就是我们如何通过 DNA (图中的 Genome) 来编译出神经网络的. Node genes 很简单就是神经网络每个节点的定义. 哪些是输入, 哪些输出, 哪些是隐藏节点. Connect. Genes 则是对于每一个节点与节点的链接是什么样的形式, 从输入节点 (In) 到输出节点 (Out), 这个链接的参数 (weight) 是多少. 输出节点的值就是 Out = In * weight. 然后这条链接是要被使用 (Enabled) 还是不被使用 (DISAB). 最后就是这条链接专属的 创新号 (Innov)
+
+通过上面的 Genome 我们就能搭建出那个神经网络了, 可以看出我们有一个 2-5 DISAB 的链接, 原因就是在2-5之间我们已经变异出了一个4节点. 所以2-5 是通过 4 相链接的, 这样我们就需要将原来的 2-5 链接 disable 掉.
+
+![neuro_evolution_4](./img/evolution_alg/ne/neuro_evolution_4.png)
+
+关于变异呢. 我们可以有 节点变异 和 链接变异, 就和上图一样, 这个简单, 大家都看得出来. 但是要提的一点是, 如果新加的节点像 6 那样, 是在原有链接上的突变节点, 那么原来的 3-5 链接就要被 disable 掉.
+
+![neuro_evolution_5](./img/evolution_alg/ne/neuro_evolution_5.png)
+
+再来就是 crossover 了, 两个神经网络 “交配” 啦. 这时你就发现原来 innovation number 在这里是这么重要. 两个父母通过 innovation number 对齐, 双方都有的 innovation, 我们就随机选一个, 如果双方有个方没有的 Innovation, 我们就直接全部遗传给后代.
+
+之所以图上还出现了 “disjoint” 和 “excess” 的基因, 是因为在后面如果要区分种群不同度, 来选择要保留的种群的时候, 我们需要通过这个来计算, 计算方式我就不细提了, 大家知道有这么一回事就行.
+
+好了, 通过上面的方式一步步进行, 好的神经网络被保留, 坏的杀掉. 我们的神经网络就能朝着正确的方形进化啦.
+
+#### 进化策略与神经网络
+
+** Evolution Strategy 相比较于 Genetic Algorithm 更加注重 mutation 的过程. 而且其中高度使用到了正态分布 (Normal distribution). **
+
+而 OpenAI 提出的能够替代强化学习的 ES 可以终结如下:
+
+- 固定神经网络结构;
+- 使用正态分布来扰动 (perturb) 神经网络链接参数;
+- 使用扰动的网络在环境中收集奖励;
+- 用奖励 (reward) 或者 效用 (utility) 来诱导参数更新幅度;
+
+下面的图是 OpenAI 用来诠释 ES 算法的精辟:
+
+![neuro_evolution_6](./img/evolution_alg/ne/neuro_evolution_6.png)
+
+如果机器学习就是为了找到图中最红的地方, 那么 ES 就是在自己周围随机繁殖后代, 然后有些后代会靠近红色的地方, 有些不会. 那么我们就修改 ES 神经网络的参数, 让它更加像那些好后代的参数. 使用这种方式来越来越靠近红色.
+
+
+### NEAT 监督学习
+
+[NEAT python module](https://neat-python.readthedocs.io/en/latest/neat_overview.html)
+
+#### 要点
+
+接着上节介绍了神经进化的内容, 我们这次就来实现 NEAT 的算法. 因为 NEAT 相比普通的反向传播神经网络更加复杂. 我也尝试着纯手工编写 NEAT 算法. 可是… 尝试了几天过后, 因为太麻烦了, 我就放弃了. 我先总结下自己淌过的水, 如果你有能力解决下面提到的几点, 恭喜你, 你真的特别厉害. 我想提一下, **如果用NEAT 或者遗传算法做监督学习, 这会比用梯度的神经网络慢, 所以如果你想做监督学习, 梯度神经网络是你的最爱. 不过这个教程只是为了学习如何使用 NEAT, 之后我们再那它来做强化学习. 在强化学习上, NEAT 还是有优势的. **
+
+难点 
+
+- 有效的储存编码的神经网络 (我用 numpy 解决了); 
+- 有效的解码并生成一个可以正向传播的神经网络 (由于没有层结构, 不能方便地使用矩阵 dot 点乘. 我查了很多方法, 但是觉得那些方法都有点复杂, 有的也没效率); 
+- 可视化网络结构 (当然要可视化啦, 不可视化出来, 你怎么知道自己的神经网络长什么样, 不好 debug 了呀); 
+- NEAT 的 Recurrent link/node 不是通常说的 RNN, 处理形式不同.
+
+如果不能, 其实也没关系, 有高手已经写好了 NEAT 的 Python 模块, 我们直接调用就行. 下图就是使用 NEAT 模块生成的一个神经网络, 看起来很优雅吧.
+
+![supervisor_learning_neat_0](./img/evolution_alg/ne/supervisor_learning_neat_0.png)
+
+#### 环境准备
+
+```python
+pip install neat-python
+pip3 install graphviz
+```
+
+#### 实例
+
+接着我们来说说 neat-python 网页上的一个使用例子, 用 neat 来进化出一个神经网络预测 XOR 判断. 什么是 XOR 呢, 简单来说就是 OR 判断的改版.
+
+- 输入 True, True, 输出 False
+- 输入 False, True, 输出 True
+- 输入 True, False, 输出 True
+- 输入 False, False 输出 False
+
+在例子当中, 我们用这样的形式来代替要学习的 input 和 output:
+
+```python
+xor_inputs = [(0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0)]
+xor_outputs = [   (0.0,),     (1.0,),     (1.0,),     (0.0,)]
+```
+
+那怎么样来评价每个个体的适应度 (fitness), 或者说他的预测得分高低呢. 我们就对每个个体评分. 如果4个 xor 判断都预测对了就得4分, 用平方差来计算越策错的. 下面的 function 中就是根据每个 genome (DNA), 生成一个神经网络, 用这个神经网络预测, 再对这个 genome 打分, 并写入成它的 fitness.
+
+```python
+def eval_genomes(genomes, config):
+    for genome_id, genome in genomes:   # for each individual
+        genome.fitness = 4.0        # 4 xor evaluations
+        net = neat.nn.FeedForwardNetwork.create(genome, config)
+        for xi, xo in zip(xor_inputs, xor_outputs):
+            output = net.activate(xi)
+            genome.fitness -= (output[0] - xo[0]) ** 2
+```
+
+每一个 neat 的程序里有需要有这样的评分标准. 接着我们创建一个 config 的文件, 用来给定所有运行参数. 这个 config 文件要分开存储, 而且文件里要有一下几个方面的参数预设. 对于每个方面具体的预设值请参考我在 github 中的config-forward这个文件. 对于每个方面的解释, 不太明白的话, 请参考[这里](https://neat-python.readthedocs.io/en/latest/config_file.html)
+
+```python
+[NEAT]
+[DefaultGenome]
+[DefaultSpeciesSet]
+[DefaultStagnation]
+[DefaultReproduction]
+
+```
+
+现在我们就能使用这些预设的参数来生成一个 config 的值了 (上面的 eval_genomes 也用到了这个 config).
+
+```python
+local_dir = os.path.dirname(__file__)
+config_file = os.path.join(local_dir, 'config-feedforward')     # 参数文件
+config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
+                     neat.DefaultSpeciesSet, neat.DefaultStagnation,
+                     config_file)
+```
+
+有了这个 config, 我们就能拿它来生成我们整个 population, 使用这个初始的 p 来训练 300 次, 注意在 config-forward 中我们设置了一个参数 fitness_threshold = 3.9, 就是说, 只要有任何一个 fitness 达到了 3.9 (最大4), 我们就停止迭代更新 population. 所以有可能不到 300 次就学好了. 学好之后, 我们输出表现最好的 winner.
+
+```python
+p = neat.Population(config)
+winner = p.run(eval_genomes, 300)   # 输入计算 fitness 的方式和 generation 的次数
+```
+
+最主要的过程就完啦, 简单吧. 在这个例子脚本中的其他代码都是现实结果的代码, 大家随便看看就知道了.
+
+```python
+print('\nOutput:')
+winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
+for xi, xo in zip(xor_inputs, xor_outputs):
+    output = winner_net.activate(xi)
+    print("input {!r}, expected output {!r}, got {!r}".format(xi, xo, output))
+```
+
+我们通过这个来输出最后的 winner 神经网络预测结果, 不出意外, 你应该预测很准. 最后通过 visualize.py 文件的可视化功能, 我们就能生成几个图片, 使用浏览器打开 speciation.svg 看看不同种群的变化趋势, avg_fitness.svg 看看 fitness 的变化曲线, Digraph.gv.svg 看这个生成的神经网络长怎样.
+
+
+![supervisor_learning_neat_1](./img/evolution_alg/ne/supervisor_learning_neat_1.png)
+![supervisor_learning_neat_2](./img/evolution_alg/ne/supervisor_learning_neat_2.png)
+![supervisor_learning_neat_3](./img/evolution_alg/ne/supervisor_learning_neat_3.png)
+
+关于最下面的那个神经网络图, 需要说明一下, 如果是实线, 如 B->1, B->2, 说明这个链接是 Enabled 的. 如果是虚线(点线), 如 B->A XOR B 就说明这个链接是 Disabled 的. 红色的线代表 weight <= 0, 绿色的线代表 weight > 0. 线的宽度和 weight 的大小有关.
+
+
+### NEAT 强化学习
+
+#### 要点
+上节内容 里, 我们见到了使用 NEAT 来进化出一个类似于监督学习中的神经网络, 这次我们用 NEAT 来做强化学习 (Reinforcement Learning), 这个强化学习可是没有反向传播的神经网络哦, 有的只是一个不断进化 (还可能进化到主宰人类) 的神经网络!! (哈哈, 骗你的, 因为每次提到在电脑里进化, 联想到科幻片, 我就激动!)
+
+立杆子的机器人最后学习的效果提前看:
+
+![neat_rl_0](./img/evolution_alg/ne/neat_rl_00.png)
+
+这个机器人的神经网络长这样:
+
+![neat_rl_0](./img/evolution_alg/ne/neat_rl_0.png)
+
+gym 模拟环境 
+OpenAI gym 应该算是当下最流行的 强化学习练手模块了吧. 它有超级多的虚拟环境可以让你 plugin 你的 python 脚本.
+
+![neat_rl_1](./img/evolution_alg/ne/neat_rl_22.png)
+
+安装 gym 的方式也很简单, 大家可以直接参考我在之前做 强化学习 Reinforcement learning 教程中的这节内容, 简单的介绍了如何安装 Gym. 如果还是遇到了问题, 这里或许能够找到答案.
+
+#### CartPole 进化
+
+这次进化的框架系统大致是这样的:
+
+```python
+def eval_genomes(genomes, config):
+    # 这是我们为每一个 genome 计算 fitness 的功能, 在 NEAT 中必备.
+
+def run():
+    # 这是我们生成 population, 不断适者生存的地方
+
+def evaluation():
+    # 我们挑选出最好的个体进行可视化测试
+```
+
+在 neat 的 config 文件中, 我想提到的几个地方是:
+
+```python
+fitness_criterion     = max     # 按照适应度最佳的模式选个体
+# 为了一直立杆子下去, 这一个封顶值设置成永远达不到,
+# 具体看我在 eval_genomes 中如何计算 fitness 的
+fitness_threshold     = 2.
+
+activation_default      = relu      # 我挑选的 激活函数
+
+# network 输入输出个数
+num_hidden              = 0
+num_inputs              = 4
+num_outputs             = 2
+
+```
+
+有了这个 config 文件里面的信息, 我们就能创建网络和评估网络了. 和上次一样, 下面的功能对每一个个体生成一个神经网络, 然后把这个网络放在立杆子游戏中玩, 一个 generation 中我们对每一个 genome 的 net 测试 GENERATION_EP 这么多回合, 然后最后挑选这么多回合中总 reward 最少的那个回合当成这个 net 的 fitness (你可以想象这是木桶效应, 整体的效应取决于最差的那个结果). 然后要注意的是, net.activate() output 的是动作的值. 然后我们挑选一个值最大的动作.
+
+```pytnon
+def eval_genomes(genomes, config):
+    for genome_id, genome in genomes:
+        net = neat.nn.FeedForwardNetwork.create(genome, config)
+        ep_r = []
+        for ep in range(GENERATION_EP): # run many episodes for the genome in case it's lucky
+            accumulative_r = 0.         # stage longer to get a greater episode reward
+            observation = env.reset()
+            for t in range(EP_STEP):
+                action_values = net.activate(observation)
+                action = np.argmax(action_values)
+                observation_, reward, done, _ = env.step(action)
+                accumulative_r += reward
+                if done:
+                    break
+                observation = observation_
+            ep_r.append(accumulative_r)
+        genome.fitness = np.min(ep_r)/float(EP_STEP)    # 
+```
+
+不知道大家看到这里有没有想过, 如果我们能并行运算该多好. 所以, 我亲测失败. 原因是, gym + neat 的环境不方便运行 multiprocessing. 如果你想多线程的话, 可以考虑使用 threading, 不过不保证效率有提高. 想知道为什么的话, 请看这里.
+
+接下来我们就开始写 run 里面的内容了, 创建种群, 繁衍后代, 适者生存, 不适者淘汰.
+
+```pytnon
+def run():
+    config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
+                         neat.DefaultSpeciesSet, neat.DefaultStagnation, CONFIG)
+    pop = neat.Population(config)
+    pop.run(eval_genomes, 10)       # train 10 generations
+
+```
+
+那些可视化种群进化图的代码, 请在我的 github 中看全套代码吧.
+
+最后我们挑选一下保存的 checkpoint 文件, 展示出最强神经网络的样子吧.
+
+```python
+def evaluation():
+    p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-%i' % CHECKPOINT)
+    winner = p.run(eval_genomes, 1)     # find the winner in restored population
+    net = neat.nn.FeedForwardNetwork.create(winner, p.config)
+    while True:
+        s = env.reset()
+        while True:
+            env.render()
+            a = np.argmax(net.activate(s))
+            s, r, done, _ = env.step(a)
+            if done: break
+```
+
+这串代码的结果就是这节内容最上面的那个视频效果啦. winner 的神经网络进化成这样了. 不过你的生成的神经网络可能并不是长这样. 有时候还可能某个 input 都没有使用到. 就说明这个 input 的效用可能并不大.
+
+![neat_rl_1](./img/evolution_alg/ne/neat_rl_1.png)
+
+如果是实线, 如 B->1, B->2, 说明这个链接是 Enabled 的. 如果是虚线(点线), 如 B->A XOR B 就说明这个链接是 Disabled 的. 红色的线代表 weight <= 0, 绿色的线代表 weight > 0. 线的宽度和 weight 的大小有关.
+
+####Recurrent link 和 node
+如果修改一下 config 文件里面的参数, 比如下面的 feed_forward = True 改成 False, 我们就允许网络能产生 recurrent 节点或者链接. 这样的设置能使网络产生记忆功能. 就像循环神经网络那样. 神经网络的形式结构就能更加多种多样. 不过这里的 recurrent 貌似是和我们一般见到的 Recurrent Neural Network 有所不同, 我们通常说的 RNN 是通过一个 hidden state 来传递记忆, 而 NEAT 中的 Recurrent 是通过一种 “延迟刷新的形式” (不知道这样说对不对, 我是细看了一遍 NEAT-python 的底层代码发现的), 每一个时间点每个节点只接收这一时刻传来的信息. 比如下面第一张图中, 现在所有节点都为0, 如果我先更新 node3, 由于接收到了 act2=0, node3 还是会为0. 但是如果是先更新 act2, 等 act2 有值了再更新 node3, 那 node3 这时刻也会有值. 如果这是一个 feedforward net, 更新 link/node 的顺序十分重要, 上述情况肯定会出问题的. 不过在这种版本中的 recurrent, 程序不知道顺序, 所以每次都 copy 一份所有 node 的值, 用上一步的 node 的值进行这一步的操作, 这样进行 recurrent 的操作.
+
+```python
+feed_forward            = False
+```
+
+将所有原来的 net = neat.nn.FeedForwardNetwork 改成 neat.nn.RecurrentNetwork, 就能按上面所说的方式进行 recurrent 操作了.
+
+```python
+# net = neat.nn.FeedForwardNetwork.create(winner, p.config)
+net = neat.nn.RecurrentNetwork.create(genome, config)
+```
+
+这样我们就能发现, 产生的网络还能是这样, 注意箭头的方向和位置.
+
+![neat_rl_2](./img/evolution_alg/ne/neat_rl_2.png)
+![neat_rl_3](./img/evolution_alg/ne/neat_rl_3.png)
+
+最后, 在这里提一下, 还有一些根据 NEAT 改良的算法. 比如
+
+- [HyperNEAT (A Hypercube-Based Encoding for Evolving Large-Scale Neural Networks)](http://axon.cs.byu.edu/Dan/778/papers/NeuroEvolution/stanley3**.pdf), 使用 NEAT 形式生成 CPPN 的网络, 用 CPPN 进行 indirect encoding 生成更大更复杂的神经网络, 但是后者的网络结构的 capacity 不能改变;
+
+- [ES-HyperNEAT (An Enhanced Hypercube-Based Encoding for Evolving the Placement, Density and Connectivity of Neurons)](https://eplex.cs.ucf.edu/papers/risi_alife12.pdf), 解决上面提到的网络结构 capacity 不可变问题.
+
+
+
+### Evolution Strategy 强化学习
+
+[论文 Evolution Strategies as a Scalable Alternative to Reinforcement Learning](https://arxiv.org/abs/1703.03864)
+
+#### 要点
+
+我们见到了使用 NEAT 来进化出一个会立杆子的机器人. 这次, 我们使用另一种进化算法 Evolution Strategy (后面都用简称 ES 代替) 来实现大规模强化学习. 如果你的计算机是多核的, 我们还能将模拟程序并行到你多个核上去. ** 如果我用一句话概括强化学习上的 ES : 在自己附近生宝宝, 让自己更像那些表现好的宝宝 **
+
+#### 算法介绍
+
+![es_rl_1_1.png](./img/evolution_alg/ne/es_rl_1_1.png)
+
+简单来说, 这个算法就是在不断地试错, 然后每一次试错后, 让自己更靠近到那些返回更多奖励的尝试点. 如果大家对强化学习的 Policy Gradient 有了解的话, 我们就来在这里说说 Policy Gradient (PG) 和 Evolution Strategy (ES) 的不同之处.
+
+![es_rl_1_2.png](./img/evolution_alg/ne/es_rl_1_2.png)
+
+PG 和 ES 是一对双胞胎兄弟, 他们非常像, 不过他们最重要的一点差别就是. 
+
+- PG 需要进行误差反向传播, 而 ES 不用.  
+- 在行为的策略上, PG 是扰动 Action, 不同的 action 带来不同的 reward, 通过 reward 大小对应上 action 来计算 gradient, 再反向传递 gradient. 
+- ES 是扰动 神经网络中的 Parameters, 不同的 parameters 带来不同的 reward, 通过 reward 大小对应上 parameters 来按比例更新原始的 parameters. 上图就阐述了这样的思路.
+
+
+[OpenAI 官网](https://blog.openai.com/evolution-strategies/) 上对这种算法的最简单 Python 诠释:
+
+```python
+# 最简单的诠释: 找到 solution 中的值
+import numpy as np
+solution = np.array([0.5, 0.1, -0.3])
+def f(w): return -np.sum((w - solution)**2)
+
+npop = 50      # 种群数
+sigma = 0.1    # 噪点标准差
+alpha = 0.001  # 学习率
+w = np.random.randn(3) # 对 solution 的初始猜测
+for i in range(300):
+  N = np.random.randn(npop, 3)  # 产生噪点
+  R = np.zeros(npop)
+  for j in range(npop):
+    w_try = w + sigma*N[j]
+    R[j] = f(w_try)             # 得到环境奖励
+  A = (R - np.mean(R)) / np.std(R)  # 归一化奖励
+  w = w + alpha/(npop*sigma) * np.dot(N.T, A)   # 更新参数
+```
+#### Python实践
+
+这次进化的框架系统大致是这样的:
+
+```python
+def get_reward():
+    # 机器人在环境中玩, 我们会通过 CPU 并行计算这个功能
+
+def build_net():
+    # 建网络
+
+def train():
+    # 让儿孙们尽情在平行世界玩耍
+    rewards = [get_reward() for i in range(N_KID)]
+    # 再用 rewards 更新 net
+
+build_net()
+for g in range(N_GENERATION):
+    train()
+
+```
+
+接下来我们将会往这个框架上加很多东西. 如果觉得我太啰嗦了, 你也可以直接跳到这份完整代码 研究. 相比这份代码, 我下面说的要简单一点(为了方便理解). 首先, 我们使用 numpy 来搭建神经网络. 其实我发现, 用 tensorflow 这种模块来建网络可能比较麻烦, 所以为了更直观, 我就用 numpy 好了.
+
+```python
+def build_net():
+    def linear(n_in, n_out):  # network linear layer
+        w = np.random.randn(n_in * n_out).astype(np.float32) * .1
+        b = np.random.randn(n_out).astype(np.float32) * .1
+        return (n_in, n_out), np.concatenate((w, b))
+    s0, p0 = linear(CONFIG['n_feature'], 30)
+    s1, p1 = linear(30, 20)
+    s2, p2 = linear(20, CONFIG['n_action'])
+    return [s0, s1, s2], np.concatenate((p0, p1, p2))
+```
+
+这里我们搭建了3层网络, 注意我并没有让 w 和 b 变成矩阵, 因为在 ES 中, 我觉得1维的参数比较好进行加噪点处理. 之后我们在并行的时候再将参数变成矩阵形式. 所以这个地方, 我也 return 了各层的 shape 为了之后变矩阵.
+
+我们将使用 multiprocessing 这个模块来实现 CPU 的并行, 有兴趣了解 python 并行的朋友, 我有一个非常简单的 multiprocessing 的教程. 并行的时候传给每个 CPU 的数据越少, 运行越快, 所以与其将像这样的 np.random.randn(noise.size) array 噪点数据传入其他 CPU, 还不如在其他 CPU 运算的时候再组装这些噪点就好. 因为我们只需要给 CPU 传入一个数 noise seed 来代替庞大的 array, 用 seed 来伪随机生成 array, 这样能加速你的运算. 在更新网络的时候再用同样的 seed 伪随机构造同样的 array 更新就行. 虽然创建了两遍 array, 但是这还是比将 noise array 传入其他 CPU 快.
+
+```python
+def train(net_shapes, net_params, pool):
+    # 生成噪点的 seed
+    noise_seed = np.random.randint(0, 2 ** 32 - 1, size=N_KID, dtype=np.uint32) # 限制 seed 的范围.
+
+    # 用多进程完成 get_reward 功能
+    jobs = [pool.apply_async(get_reward, (这里是get_reward需要的数据, 比如 seed))
+            for k_id in range(N_KID)]
+    rewards = np.array([j.get() for j in jobs])
+
+    cumulative_update = np.zeros_like(net_params)       # initialize updated values
+    for k_id in range(N_KID):
+        np.random.seed(noise_seed[k_id])                # reconstruct noise using seed
+        cumulative_update += rewards[k_id] * np.random.randn(net_params.size)
+
+    net_params = net_params + LR/(N_KID*SIGMA) * cumulative_update
+    return net_params
+
+```
+
+上面的这个 pool 是我们用了 multiprocessing.Pool 生成的多进程池. 在这个教程中有介绍. 拿到每个 kid 的 reward 后, 我们重新按照之前的 seed 组装 noise, 在进行 net_params 的更新. 但是你看到的这个版本的 train() 和我 github 中的不太一样, 因为 github 中使用的不是完完全全的 reward 来诱导更新. 而是使用了 utility 这个东西. 简单来说, 就是将 reward 排序, reward 最大的那个, 对应上 utility 的第一个, 反之, reward 最小的对应上 utility 最后一位. 而我们的 utility 长这样:
+
+![es_rl_1_3.png](./img/evolution_alg/ne/es_rl_1_3.png)
+
+OpenAI 的 paper 当中提到这样会促进学习, 我想这样的效果应该和 normalize reward 的效果差不多. 我们就按 OpenAI 提到的方法来.
+
+接下来要开始定义在平行的 CPU 中怎么样玩啦 get_reward().
+
+```python
+def get_reward(shapes, params, env, ep_max_step, seed,):
+    np.random.seed(seed)    # 使用 seed 按规律伪随机生成噪点
+    params += SIGMA * np.random.randn(params.size)
+
+    # 将 params 变成矩阵形式
+    p = params_reshape(shapes, params)
+    # 开始用 gym 模拟
+    s = env.reset()
+    ep_r = 0.
+    for step in range(ep_max_step):
+        a = get_action(p, s)    # 神经网络选择行为
+        s, r, done, _ = env.step(a)
+        ep_r += r
+        if done: break
+    return ep_r     # 返回回合奖励
+```
+
+同样, 上面的 get_reward() 也是简单版本的, 我 github 当中, 用了论文中提到的 mirrored sampling 这种方法 (论文名: Mirrored Sampling and Sequential Selection for Evolution Strategies). 下面是这个论文中的图.
+
+![es_rl_1_4.png](./img/evolution_alg/ne/es_rl_1_4.png)
+
+
+简单说, 我们会生成很多噪点, 与其完全随机, 还不如生成一些镜像的噪点. 那这些镜像噪点中, 大多数情况都是其中一个比另一个好, 所以总会有比较好的那个一个噪点, 我们就利用镜像中比较好的噪点, 加大幅度更新.
+
+上面的就是 ES 的核心功能了, 其他的小功能, 我想, 只要你运行一下我写的那个文件, 自己折腾一下, 就能轻松理解. 你在这里挑选不同的模拟环境:
+
+```python
+CONFIG = [
+    dict(game="CartPole-v0", ......),
+    dict(game="MountainCar-v0", ......),
+    dict(game="Pendulum-v0", ......)
+][2]        # 这里选择要运行的游戏
+
+```
+然后试试不同的参数:
+
+```python
+N_KID = 10                  # half of the training population
+N_GENERATION = 5000         # training step
+LR = .05                    # learning rate
+SIGMA = .05                 # mutation strength or step size
+```
+
+你就能对 ES 有个大概的了解了. 注意, 每个游戏环境的运行时间长短, 取决于你的硬件, 比如你有2核, 像 MountainCar 可能运行5-10分钟吧. CartPole 是最简单一个环境了, 学会的时间最短. 我用 MacBook 两核, 跑了不到30秒就能立起杆子了. 最终的效果也就和你在教程最开头看到的一样.
+
+看好 OpenAI 的这种算法, 这套算法还比较原始和死板, 之后应该会有很多基于他的算法改进版. 我们拭目以待吧.
 
 
 # 其它应用
