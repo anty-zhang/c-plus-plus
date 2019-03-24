@@ -6,92 +6,68 @@ Visit my tutorial website for more: https://morvanzhou.github.io/tutorials/
 """
 import numpy as np
 import tensorflow as tf
-
-
-
+from tensorflow.contrib.distributions import MultivariateNormalFullCovariance
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 
-DNA_SIZE = 1        # DNA (real number)
+DNA_SIZE = 2        # parameter (solution) number
 POP_SIZE = 100      # population size
-N_KID = 50          # n kids per generation
-DNA_BOUND = [0, 5]  # solution upper and lower bounds
-N_GENERATION = 200
+N_GENERATION = 200  # training step
+LR = 0.02           # learning rate
 
 
-def F(x):
-    return np.sin(10*x)*x + np.cos(2*x)*x     # to find the maximum of this function
-
-
-# find non-zero fitness for selection
+# fitness function
 def get_fitness(pred):
-    return pred.flatten()
+    return -((pred[:, 0])**2 + pred[:, 1]**2)
+
+# build multivariate distribution
+mean = tf.Variable(tf.random_normal([2, ], 13., 1.), dtype=tf.float32)      # 均值
+cov = tf.Variable(5. * tf.eye(DNA_SIZE), dtype=tf.float32)                  # 协方差
+mvn = MultivariateNormalFullCovariance(loc=mean, covariance_matrix=cov)     # Construct Multivariate Normal distribution
+
+make_kid = mvn.sample(POP_SIZE)     # sampling operation
+
+# compute gradient and update mean and covariance matrix from sample and fitness
+
+tf_kids_fitness = tf.placeholder(tf.float32, [POP_SIZE, ])
+tf_kids = tf.placeholder(tf.float32, [POP_SIZE, DNA_SIZE])
+loss = - tf.reduce_mean(mvn.log_prob(tf_kids) * tf_kids_fitness)    # log prob * fitness
+train_op = tf.train.GradientDescentOptimizer(LR).minimize(loss)     # compute and apply gradients for mean and cov
 
 
-def make_kid(pop, n_kid):
-    # generate empty kid holder
-    kids = {'DNA': np.empty((n_kid, DNA_SIZE))}
-    kids['mut_strength'] = np.empty_like(kids['DNA'])
-
-    for kid_value, kid_strength in zip(kids['DNA'], kids['mut_strength']):
-        # crossover (roughly half p1 and half p2)
-        p1, p2 = np.random.choice(np.arange(POP_SIZE), size=2, replace=False)
-        crossover_point = np.random.randint(0, 2, DNA_SIZE, dtype=np.bool)      # crossover points
-
-        # 获取p1或者p2索引的值
-        kid_value[crossover_point] = pop['DNA'][p1, crossover_point]
-        kid_value[~crossover_point] = pop['DNA'][p2, ~crossover_point]
-
-        kid_strength[crossover_point] = pop['mut_strength'][p1, crossover_point]
-        kid_strength[~crossover_point] = pop['mut_strength'][p2, ~crossover_point]
-
-        # mutate (chang DNA base on normalize distribution)
-        kid_strength[:] = np.maximum(kid_strength + (np.random.rand(*kid_strength.shape) - 0.5), 0.)  # must > 0
-        kid_value += kid_strength * np.random.randn(*kid_value.shape)
-        kid_value[:] = np.clip(kid_value, *DNA_BOUND)   # clip the mutated value
-
-    return kids
-
-
-def kill_bad(pop, kids):
-    # put pop and kids together
-    for key in ['DNA', 'mut_strength']:
-        pop[key] = np.vstack((pop[key], kids[key]))
-
-    fitness = get_fitness(F(pop['DNA']))    # calculate global fitness
-    idx = np.arange(pop['DNA'].shape[0])
-    good_idx = idx[fitness.argsort()][-POP_SIZE:]    # select by fitness ranking(not value)
-
-    for key in ["DNA", 'mut_strength']:
-        pop[key] = pop[key][good_idx]
-
-    return pop
-
-
-pop = {
-    'DNA': 5. * np.random.rand(1, DNA_SIZE).repeat(POP_SIZE, axis=0),   # initialize the pop DNA values
-    'mut_strength': np.random.rand(POP_SIZE, DNA_SIZE)                  # initialize the pop mutation strength values
-}
-
-
-# something about plotting
+# something about plotting (can be ignored)
+n = 300
+x = np.linspace(-20, 20, n)
+X, Y = np.meshgrid(x, x)
+Z = np.zeros_like(X)
+for i in range(n):
+    for j in range(n):
+        Z[i, j] = get_fitness(np.array([[x[i], x[j]]]))
+plt.contourf(X, Y, -Z, 100, cmap=plt.cm.rainbow)
+plt.ylim(-20, 20)
+plt.xlim(-20, 20)
 plt.ion()
-x = np.linspace(*DNA_BOUND, 200)
-plt.plot(x, F(x))
 
-for _ in range(N_GENERATION):
-    # something about plotting
-    if 'sca' in globals():
-        sca.remove()
 
-    sca = plt.scatter(pop['DNA'], F(pop['DNA']), s=200, lw=0, c='red', alpha=0.5)
-    plt.pause(0.05)
+with tf.Session() as sess:
+    init = tf.global_variables_initializer()
+    sess.run(init)
 
-    # ES part
-    kids = make_kid(pop, N_KID)
-    pop = kill_bad(pop, kids)       # keep some good parent for elitism
+    # training
+    for g in range(N_GENERATION):
+        kids = sess.run(make_kid)
+        kids_fitness = get_fitness(kids)
+        sess.run(train_op, feed_dict={tf_kids_fitness: kids_fitness, tf_kids: kids})    # update distribution parameters
 
+        # plotting update
+        if 'sca' in globals():
+            sca.remove()
+
+        sca = plt.scatter(kids[:, 0], kids[:, 1], s=30, c='k')
+        plt.pause(0.05)
+
+print('Finished')
 plt.ioff()
 plt.show()

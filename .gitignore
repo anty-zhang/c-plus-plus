@@ -30,3 +30,7 @@ my_model
 .idea
 events.out*
 MNIST_DATA
+neat-checkpoint*
+*.svg
+*.pyc
+__pycache__
