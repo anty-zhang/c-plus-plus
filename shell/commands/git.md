@@ -95,6 +95,8 @@ git add .
 git commit -m ''
 git push origin master
 
+# .gitignore 不起作用
+git rm -r --cached .
 
 
 ```
