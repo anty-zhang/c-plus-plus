@@ -38,7 +38,10 @@ source ~/.bash_profile
 # conda 配置源(.condarc 文件没有的话，需要新建，同样可以使用vi 命令进行新建文件并写入内容)
 cat ~/.condarc
 channels:
+    - https://mirrors.ustc.edu.cn/anaconda/pkgs/main/
+    - https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/
     - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+    - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
     - defaults
 show_channel_urls: true
 ```
