@@ -222,21 +222,44 @@ docker build - < xx.tar.gz
 ```bash
 docker start docker stop docker restart docker attach docker nsenter
 
+# 启动服务参数
+# --mount:    表示要进行挂载
+# source:     指定要运行部署的模型地址
+# target:     这个是要挂载的目标位置
+# -t:         指定的是挂载到哪个容器
+# -d:         后台运行
+# -p:         指定主机到docker容器的端口映射
+# -e:         环境变量
+# -v:         docker数据卷
+# --name:     指定容器name，后续使用比用container_id更方便
+
 # 启动容器
 docker run -dit ubuntu
 
 # 进入容器
-docker container ls
 docker attach containerid	# 如果从这个 stdin 中 exit，会导致容器的停止
 docker exec -it 69d1 bash
 
+# 查看运行容器
+docker container ls
+docker ps
+
+# 查看全部容器
+docker ps -a
 
 # 找到容器webserver的进程id
 docker inspect --format "{{ .State.Pid }}" webserver sudo nsenter --target 32090 --mount --uts --ipc --net --pid sudo nsenter --target 32090 --mount --uts --ipc --net --pid -- /usr/bin/env --ignore-environment HOME=/root /bin/bash --login
 
 wget -P ~ wget -P ~ https://github.com/yeasy/docker_practice/raw/master/_local/.bashrc_docker echo "[ -f ~/.bashrc_docker ] && . ~/.bashrc_docker" >> ~/.bashrc; source ~/.bashrc
 
+# 删除指定容器
+docker rm $container_id或$container_name
+
+# 删除所有容器
 docker rm $(docker ps -a -q)
+
+# 将本地文件拷贝到容器内
+docker cp 本地文件 容器长ID:容器路径
 
 # export and save 主要区别
 # export导出的容器；export导出的实际上是一个Linux文件系统的镜像
@@ -284,6 +307,7 @@ docker run --volumes-from dbdata2 -v $(pwd)/tmp:/backup busybox tar xvf /backup/
 
 ```bash
 docker run -d --name web1 -P training/webapp python app.py
+# 查看运行容器日志
 docker logs -f web1
 docker run -d --name web1 -p 5000:5000 training/webapp python app.py
 docker run -d --name web1 -p 5000:5000 -p 5001:5001 training/webapp python app.py
