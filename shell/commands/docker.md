@@ -12,6 +12,33 @@ brew cask install docker
 https://registry.docker-cn.com
 http://141e5461.m.daocloud.io
 
+
+tree .docker/
+.docker/
+├── certs.d
+├── config.json
+└── daemon.json
+
+cat .docker/daemon.json
+{
+  "debug" : true,
+  "experimental" : false,
+  "registry-mirrors" : [
+    "https://registry.docker-cn.com",
+    "http://f1361db2.m.daocloud.io"
+  ]
+}
+
+cat .docker/config.json
+{
+  "credsStore" : "desktop",
+  "stackOrchestrator" : "swarm",
+  "experimental" : "disabled",
+  "auths" : {
+
+  }
+}
+
 ```
 
 ## centos

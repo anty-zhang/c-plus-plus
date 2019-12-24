@@ -39,12 +39,38 @@ uid = xiaoqiang
 gid = xiaoqiang
 ```
 
+## systemctl 配置
+```bash
+
+# 执行生成rsyncd.service文件
+systemctl enable rsyncd.service
+
+# systemctl启动配置
+cat /usr/lib/systemd/system/rsyncd.service
+[Unit]
+Description=fast remote file copy program daemon
+ConditionPathExists=/etc/rsyncd.conf
+
+[Service]
+EnvironmentFile=/etc/sysconfig/rsyncd
+ExecStart=/usr/bin/rsync --daemon --no-detach "$OPTIONS"
+
+[Install]
+WantedBy=multi-user.target
+
+# 命令执行
+systemctl status rsyncd.service
+systemctl start rsyncd.service
+systemctl stop rsyncd.service
+systemctl list-units --type=service
+journalctl -f或者 journalctl -xe # 查看日志
+```
+
 ## 启动
 
 ```bash
 sudo rsync --daemon
 /etc/init.d/xinetd restart
-
 ```
 
 ## 测试

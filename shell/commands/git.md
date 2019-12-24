@@ -1,8 +1,8 @@
-# git 基本使用
+
 
 [TOC]
 
-
+# git 基本使用
 ## git config使用
 
 ### git config 文件存放的位置
@@ -101,3 +101,8 @@ git rm -r --cached .
 
 ```
 
+## tag basic
+
+https://dev.to/emmawedekind/using-git-tags-to-version-coding-tutorials-39cc
+
+https://en.wikibooks.org/wiki/Git/Advanced
