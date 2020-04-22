@@ -34,6 +34,13 @@ sed '2,3s/dog/cat/' ./data.d
 sed '/fox1/s/dog/cat/' ./data.d
 sed '2s/fox/elephant/; 2s/dog/cat/' ./data.d
 
+# 替换收尾空格
+echo $msg | sed -e 's/^[ \t]*//g'
+echo $msg | sed -e 's/[ \t]*$//g'
+
+# 删除所有空格
+echo $msg | sed -e 's/[[:space:]]//g'
+
 ```
 
 ## d命令实例

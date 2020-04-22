@@ -65,10 +65,13 @@ if __name__ == "__main__":
                 # auc_value, auc_op = tf.metrics.auc(label_tensor, prediction_tensor, num_thresholds=200)
                 sess.run(tf.local_variables_initializer())
 
+                correct_acc = tf.equal(pred_y, Y)
+                myacc = sess.run(tf.reduce_mean(tf.cast(correct_acc, tf.float32)))
+
                 sess.run([auc_op, update_op])
                 auc_res, accuracy_res = sess.run([auc_value, accuracy])
                 # auc = roc_auc_score(ys_train, prob_to_label(train_predict))
-                print("train auc= %s, accuracy=%s" % (auc_res, accuracy_res))
+                print("train auc= %s, accuracy=%s, myacc=%s" % (auc_res, accuracy_res, myacc))
 
         # # 预测输入X的类别
         # pred_y = sess.run(y, feed_dict={x: X})

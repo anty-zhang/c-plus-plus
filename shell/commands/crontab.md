@@ -54,3 +54,10 @@ HOME=/
 0 10 * * 1,3,5 /home/postgres/pgsql.sh # 表示的是每周的周一、周三、周五的早上10点执行该脚本
 
 ```
+
+## 配置说明
+
+```bash
+# 日志时间配置
+15 10 * * * /bin/sh train.sh >> ./log/order-probability-$(date +"\%Y-\%m-\%d").log 2>&1
+```

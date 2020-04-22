@@ -1,6 +1,60 @@
 
 [TOC]
 
+# tf 读取数据读取机制
+
+## tf 读取数据三种方式
+
+### 预加载数据
+
+- 在tf 图中定义常量或者变量来保存所有数据(适用于数据量比较小的情况)
+
+- 举例
+
+```c++
+// 
+import tensorflow as tf
+x1 = tf.constant([2,3,4])
+x2 = tf.constant([4,0,1])
+
+y = tf.add(x1,x2)
+
+with tf.Session() as sess:
+    print(sess.run(y))
+```
+
+### 数据供给(Feeding) - 使用placeholder读取内存中的数据
+
+- 在tf程序运行的每一步，让python代码来供给数据
+
+- 举例
+
+```c++
+import tensorflow as tf
+x1 = tf.placeholder(tf.int32)
+x2 = tf.placeholder(tf.int32)
+// 用python产生数据
+v1 = [2,3,4]
+v2 = [4,0,1]
+
+y = tf.add(x1,x2)
+
+with tf.Session() as sess:
+    print(sess.run(y,feed_dict={x1:v1,x2:v2}))    
+```
+
+### 从文件读取数据 - 使用queue读取硬盘中的数据
+
+- 在tf图的起始，让一个输入管线从文件读取数据
+
+### Dataset 高级API
+
+- 支持从内存和硬盘中读取数据
+
+[TensorFlow读取数据的几种方法以及队列的使用](https://www.cnblogs.com/zyly/p/8982335.html)
+
+[TensorFlow全新的数据读取方式: Dataset API入门教程](https://zhuanlan.zhihu.com/p/30751039)
+
 # tf.stack, tf.unstack
 
 > stack 按axis方向堆叠, 例如axis=0, 按行进行堆叠; axis=1, 按列进行堆叠
@@ -279,7 +333,35 @@ logits数据的格式在前面已经介绍了，为（300, 10000）的矩阵，3
 从tf.nn.sparse_softmax_cross_entropy_with_logits 实例中可以看出，tf.contrib.legacy_seq2seq.sequence_loss_by_example函数的计算过程就是在其内部的每个时间步中调用sparse_softmax_cross_entropy_with_logits函数即可
 
 ### reference
+
 [实例](https://blog.csdn.net/UESTC_C2_403/article/details/72792889)
+
 [sparse_softmax_cross_entropy_with_logits实例](https://blog.csdn.net/u012193416/article/details/77918732)
+
 [tensorflow中sequence_loss_by_example()函数的计算过程（结合TF的ptb构建语言模型例子）](https://blog.csdn.net/xyz1584172808/article/details/83056179)
 
+
+# 高级API
+
+## 模型部分
+[estimator example (iris_dnn) ](https://github.com/jizhang/tf-serve/blob/master/iris_dnn.py)
+
+[鸢尾花深层神经网络分类器](http://shzhangji.com/cnblogs/2018/05/14/serve-tensorflow-estimator-with-savedmodel/)
+
+[Tensorflow classifier.export_savedmodel](https://stackoverflow.com/questions/45640951/tensorflow-classifier-export-savedmodel-beginner)
+
+[wals model for estimator](https://github.com/mayankk6196/training-data-analyst/blob/aa0a5d94f1dc4214294a13f4090b1c84998369fc/courses/machine_learning/deepdive/10_recommend/labs/walsmodel/model.py)
+
+[TensorFlow 高级接口使用简介（estimator, keras， data, experiment）](https://www.cnblogs.com/arkenstone/p/8448208.html)
+
+[Tensorflow模型保存与加载方法](http://lionheartwang.github.io/blog/2017/12/10/tensorflowmo-xing-bao-cun-yu-jia-zai-fang-fa/)
+
+[TensorFlow Collaborative Filtering with Matrix Factorization](https://nbviewer.jupyter.org/github/cirocavani/tensorflow-jupyter/blob/master/workspace/Recommendation/ALS.ipynb)
+
+[TensorFlow协同过滤推荐实战](https://cloud.tencent.com/developer/article/1097099)
+
+[Matrix Factorization with Tensorflow](https://katbailey.github.io/post/matrix-factorization-with-tensorflow/)
+
+[Matrix Factorization: A Simple Tutorial and Implementation in Python](http://www.albertauyeung.com/post/python-matrix-factorization/)
+
+[推荐系列（四）：矩阵分解|Matrix Factorization](https://blog.csdn.net/uncle_ll/article/details/93905479)

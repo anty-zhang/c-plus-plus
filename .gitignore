@@ -34,3 +34,6 @@ neat-checkpoint*
 *.svg
 *.pyc
 __pycache__
+
+build
+*.c

@@ -1,4 +1,121 @@
-# docker（ubuntu 16.04）
+
+
+[TOC]
+
+# 安装
+
+## mac
+```bash
+brew cask install docker
+
+# 配置国内源
+https://registry.docker-cn.com
+http://141e5461.m.daocloud.io
+
+
+tree .docker/
+.docker/
+├── certs.d
+├── config.json
+└── daemon.json
+
+cat .docker/daemon.json
+{
+  "debug" : true,
+  "experimental" : false,
+  "registry-mirrors" : [
+    "https://registry.docker-cn.com",
+    "http://f1361db2.m.daocloud.io"
+  ]
+}
+
+cat .docker/config.json
+{
+  "credsStore" : "desktop",
+  "stackOrchestrator" : "swarm",
+  "experimental" : "disabled",
+  "auths" : {
+
+  }
+}
+
+```
+
+## centos
+```bash
+# 卸载旧版本
+yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine
+
+# 安装依赖
+yum install -y yum-utils device-mapper-persistent-data lvm2
+
+# 官方源
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+# 配置国内源
+yum-config-manager --add-repo https://mirrors.ustc.edu.cn/docker-ce/linux/centos/docker-ce.repo
+
+# 更新 yum 软件源缓存，并安装 docker-ce
+yum makecache fast
+yum install docker-ce
+
+# 启动 Docker CE
+# 配置/usr/lib/systemd/system/docker.service
+# /usr/lib/systemd/system/docker.socket
+systemctl enable docker
+systemctl start docker
+
+# 建立 docker 用户组
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+# 测试 Docker 是否安装正确
+docker run hello-world
+
+# 配置国内源
+cat /etc/docker/daemon.json
+{
+  "registry-mirrors": ["https://wghlmi3i.mirror.aliyuncs.com"]
+}
+
+
+cat ./docker-tags.sh
+#!/bin/bash
+
+function usage() {
+    cat << HELP
+
+dockertags  --  list all tags for a Docker image on a remote registry.
+
+EXAMPLE:
+    - list all tags for ubuntu:
+       dockertags ubuntu
+
+    - list all php tags containing apache:
+       dockertags php apache
+
+HELP
+}
+
+if [ $# -lt 1 ]; then
+    usage
+    exit
+fi
+
+image="$1"
+tags=`wget -q https://registry.hub.docker.com/v1/repositories/${image}/tags -O -  | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g' | tr '}' '\n'  | awk -F: '{print $3}'`
+
+if [ -n "$2" ]
+then
+    tags=` echo "${tags}" | grep "$2" `
+fi
+
+echo "${tags}"
+
+
+```
+
+## ubuntu 16.04
 
 ```bash
 
@@ -28,7 +145,9 @@ https://hub.docker.com/explore/
 
 ```
 
-# 获取镜像
+# 镜像
+
+## 基本操作
 
 ```bash
 docker pull --help
@@ -36,11 +155,7 @@ docker pull [选项] [Docker Registry地址]<仓库名>:<标签>
 
 Docker Registry地址:地址的格式一般是 <域名/IP>[:端口号] 。默认地址是 Docker Hub。
 仓库名:如之前所说，这里的仓库名是两段式名称，既 。 对于 Docker Hub，如果不给出用户名，则默认为library，也就是官方镜像。
-```
 
-# 镜像
-
-```bash
 docker run -it --rm ubuntu:14.04 bash
 docker images
 
@@ -69,20 +184,22 @@ curl http://localhost
 
 docker diff webserver
 docker commit --author "guoqiang@xxx.com"  -m 'echo hello' webserver nginx:v2
+
+# 查看镜像历史
 docker history nginx:v2
 docker history nginx:latest
 docker run --rm --name web2 -d -p 81:80 nginx:v2
 
 ```
 
-# 使用dockerFile定制镜像
+## 使用dockerFile定制镜像
 
 ```bash
 # dockerfile---修改，配置，安装，构建，操作命令脚本
 
 ```
 
-# Dockerfile命令
+## Dockerfile命令
 
 ```bash
 每个指令都会建立一层
@@ -125,26 +242,70 @@ docker build - < xx.tar.gz
 
 ```
 
-# docker容器操作
+# 容器
+
+## 基本操作
 
 ```bash
 docker start docker stop docker restart docker attach docker nsenter
-```
+
+# 启动服务参数
+# --mount:    表示要进行挂载
+# source:     指定要运行部署的模型地址
+# target:     这个是要挂载的目标位置
+# -t:         指定的是挂载到哪个容器
+# -d:         后台运行
+# -p:         指定主机到docker容器的端口映射
+# -e:         环境变量
+# -v:         docker数据卷
+# --name:     指定容器name，后续使用比用container_id更方便
+
+# 启动容器
+docker run -dit ubuntu
+
+# 进入容器
+docker attach containerid	# 如果从这个 stdin 中 exit，会导致容器的停止
+docker exec -it 69d1 bash
+
+# 查看运行容器
+docker container ls
+docker ps
+
+# 查看全部容器
+docker ps -a
 
 # 找到容器webserver的进程id
-
-```bash
 docker inspect --format "{{ .State.Pid }}" webserver sudo nsenter --target 32090 --mount --uts --ipc --net --pid sudo nsenter --target 32090 --mount --uts --ipc --net --pid -- /usr/bin/env --ignore-environment HOME=/root /bin/bash --login
 
 wget -P ~ wget -P ~ https://github.com/yeasy/docker_practice/raw/master/_local/.bashrc_docker echo "[ -f ~/.bashrc_docker ] && . ~/.bashrc_docker" >> ~/.bashrc; source ~/.bashrc
 
-sudo docker export 7691a814370e > ubuntu.tar cat ubuntu.tar | sudo docker import - test/ubuntu:v1.0 sudo docker import http://example.com/exampleimage.tgz example/imagerepo
+# 删除指定容器
+docker rm $container_id或$container_name
 
+# 删除所有容器
 docker rm $(docker ps -a -q)
+
+# 将本地文件拷贝到容器内
+docker cp 本地文件 容器长ID:容器路径
+
+# export and save 主要区别
+# export导出的容器；export导出的实际上是一个Linux文件系统的镜像
+# save导出的镜像；save导出的是一个分层文件系统
+# 基本命令
+docker export <container_id> > ubuntu.tar
+docker -o ubuntu.tar <container_id>
+cat ubuntu.tar | docker import - <repo_id:tag>
+docker import ubuntu.tar <repo_id:tag>
+docker import http://example.com/exampleimage.tgz example/imagerepo
+
+docker save <repo_id:tag> > ubuntu.tar
+docker save -o ubuntu.tar <repo_id:tag>
+docker load < ubuntu.tar
+docker load -i ubuntu.tar
 
 ```
 
-# docker数据管理
+# 数据管理
 ```bash
 # 数据卷
 
@@ -173,6 +334,7 @@ docker run --volumes-from dbdata2 -v $(pwd)/tmp:/backup busybox tar xvf /backup/
 
 ```bash
 docker run -d --name web1 -P training/webapp python app.py
+# 查看运行容器日志
 docker logs -f web1
 docker run -d --name web1 -p 5000:5000 training/webapp python app.py
 docker run -d --name web1 -p 5000:5000 -p 5001:5001 training/webapp python app.py
@@ -293,3 +455,9 @@ docker -H 192.168.0.2:12375 info
 
 # etcd项目
 github.com/coreos/etcd
+
+# reference
+
+[Docker 从入门到实践](https://yeasy.gitbooks.io/docker_practice/introduction/what.html)
+
+[Docker doc](https://docs.docker.com/registry/recipes/mirror/#use-case-the-china-registry-mirror)
