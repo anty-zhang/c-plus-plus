@@ -1,0 +1,9 @@
+Wed, 10 Jun 2015 09:41:52 loggerconfTest.py[line:7] DEBUG This is debug message
+Wed, 10 Jun 2015 09:41:52 loggerconfTest.py[line:8] INFO This is info message
+Wed, 10 Jun 2015 09:41:52 loggerconfTest.py[line:9] WARNING This is warning message
+example02   : INFO     This is info message
+example02   : WARNING  This is warning message
+example02   : INFO     This is info message
+example02   : WARNING  This is warning message
+example02   : INFO     This is info message
+example02   : WARNING  This is warning message
