@@ -37,3 +37,4 @@ __pycache__
 
 build
 *.c
+.ipynb_checkpoints
